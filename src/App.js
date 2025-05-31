@@ -1,39 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Home from './pages/Home';
 
-function App() {
-  const isMaintenance = true; // Set to false to disable maintenance mode
+export default function App() {
 
-  if (isMaintenance) {
-    return (
-      <div style={{
-  backgroundColor: '#f0ecfa',
-  color: 'black',
-  height: '100vh',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  textAlign: 'center',
-}}>
-  <img
-    src="/logo512.png" // Place this image in the public folder
-    alt="Under Maintenance"
-    style={{ width: '150px', marginBottom: '20px' }}
-  />
-  <h1>🚧 shizhe&apos;s Homepage is Under Maintenance</h1>
-  <p>We’ll be back soon. Thank you for your patience!</p>
-</div>
-
-    );
-  }
-
-  // Normal app rendering when not in maintenance mode
+  console.log("App component is rendering");
+  
   return (
-    <div className="App">
-      {/* Your actual app UI goes here */}
+    <div className="min-h-screen bg-gradient-to-r from-gray-100 to-blue-100">
+      <Navbar />
+      <Home />
+      <Footer />
     </div>
   );
 }
-
-export default App;
