@@ -1,9 +1,24 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <footer className="text-center p-4 bg-white mt-10 shadow-inner text-sm text-gray-500">
-      © 2025 Calvin’s Site. All rights reserved.
+    <footer className="w-full py-6 mt-12 shadow-inner" style={{ background: '#000' }}>
+      <div className="container mx-auto flex flex-col md:flex-row items-center justify-between px-4 py-4 gap-4">
+        {/* Logo */}
+        <div className="flex items-center gap-2 mb-2 md:mb-0">
+          <img src="/logo512-menu.png" alt="Logo" height="36" width="36" className="bg-white rounded-2xl shadow" style={{ borderRadius: '7px'}} />
+          <span className="font-bold text-lg tracking-wide m-3" style={{ color: '#fff' }}>shizhe’s Site</span>
+        </div>
+        {/* Navigation Links */}
+        <nav className="flex gap-8 text-sm">
+          <Link to="/" style={{ color: '#eebbc3' }} className="hover:underline hover:text-blue-300 transition">Home</Link>
+          <Link to="/aboutme" style={{ color: '#eebbc3' }} className="hover:underline hover:text-blue-300 transition m-3">About</Link>
+          <a href="mailto:calvin@tanshizhe.com" style={{ color: '#eebbc3' }} className="hover:underline hover:text-blue-300 transition">Contact</a>
+        </nav>
+        {/* Copyright */}
+        <div className="text-xs mt-2 md:mt-0" style={{ color: '#b8c1ec' }}>© 2025 shizhe’s Site. All rights reserved.</div>
+      </div>
     </footer>
   );
 }
