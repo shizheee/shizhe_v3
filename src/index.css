@@ -1,3 +1,29 @@
+/* Global header highlight bar for all h1-h6 */
+h1, h2, h3, h4, h5, h6 {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+h1:not(.no-header-bar)::before,
+h2:not(.no-header-bar)::before,
+h3:not(.no-header-bar)::before,
+h4:not(.no-header-bar)::before,
+h5:not(.no-header-bar)::before,
+h6:not(.no-header-bar)::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 1.2em;
+  background: #8261d5;
+  border-radius: 2px;
+  margin-right: 12px;
+  vertical-align: text-bottom;
+  box-shadow: 0 0 5px #2563eb33;
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
