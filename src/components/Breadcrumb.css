@@ -1,10 +1,16 @@
+@media (min-width: 768px) {
+  nav[aria-label='Breadcrumb'] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
 /* Modern breadcrumb navigation styles */
 .breadcrumb {
   display: flex;
   align-items: center;
   font-size: 0.97rem;
   color: #fff;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0 !important;
   padding: 5px 10px !important;
   background-color: #f0ecfa !important;
   border-radius: 12px !important;
@@ -33,7 +39,7 @@
   font-size: 1em;
 }
 .breadcrumb .active {
-  color: #e01515;
+  color: #3700c0;
   font-weight: 600;
   cursor: default;
 }

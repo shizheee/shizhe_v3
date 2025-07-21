@@ -34,9 +34,9 @@ export default function Footer() {
         </div>
         {/* Navigation Links */}
         <nav className="flex gap-8 text-sm">
-          <Link to="/" style={{ color: '#eebbc3' }} className="hover:underline hover:text-blue-300 transition">Home</Link>
-          <Link to="/aboutme" style={{ color: '#eebbc3' }} className="hover:underline hover:text-blue-300 transition m-3">About</Link>
-          <a href="mailto:calvin@tanshizhe.com" style={{ color: '#eebbc3' }} className="hover:underline hover:text-blue-300 transition">Contact</a>
+          <Link to="/" style={{ }} className="hover:underline hover:text-blue-300 transition">Home</Link>
+          <Link to="/aboutme" style={{ }} className="hover:underline hover:text-blue-300 transition m-3">About</Link>
+          <a href="mailto:calvin@tanshizhe.com" style={{ }} className="hover:underline hover:text-blue-300 transition">Contact</a>
         </nav>
         {/* Copyright */}
         <div className="text-xs mt-2 md:mt-0" style={{ color: '#b8c1ec' }}>© 2025 shizhe's homepage. All rights reserved.</div>

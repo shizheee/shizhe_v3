@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FaHome, FaInfoCircle, FaEnvelope } from 'react-icons/fa';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import './Navbar.css';
@@ -17,15 +18,14 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-md navbar-dark bg-dark shadow sticky-top">
       <div className="container-fluid">
-        <a className="navbar-brand fw-bold text-primary"
-          href="#">
+        <Link className="navbar-brand fw-bold text-primary" to="/">
           <img
             src="/logo512-menu.png"
             alt="Logo"
             height="40"
             className="bg-white logo-img"
           />
-        </a>
+        </Link>
 
         {/* Toggler */}
         <button
