@@ -1,10 +1,12 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+// import TryGPT from './pages/TryGPT';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import AboutMe from './pages/AboutMe'; // Make sure this page exists
 import './index.css';
+import ThreeDPrinting from './pages/ThreeDPrinting';
 
 export default function App() {
   const [showPopup, setShowPopup] = React.useState(true);
@@ -81,6 +83,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/aboutme" element={<AboutMe />} />
+          <Route path="/3dprinting" element={<ThreeDPrinting />} />
+          {/* <Route path="/trygpt" element={<TryGPT />} /> */}
           {/* Add more routes if needed */}
         </Routes>
 

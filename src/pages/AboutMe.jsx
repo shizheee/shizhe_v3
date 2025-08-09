@@ -21,7 +21,7 @@ export default function AboutMe() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="card-animate">
             <Card>
-              <div className="card-inner md:card-inner-desktop p-4">
+              <div className="card-inner md:card-inner-desktop">
                 <h2 className="text-xl font-bold mb-2 text-center float-title">👋 About Me</h2>
                 <p style={{ textAlign: 'justify' }}>
                   Hello, I'm Tan Shi Zhe<br/>
@@ -32,7 +32,7 @@ export default function AboutMe() {
           </div>
           <div className="card-animate">
             <Card>
-              <div className="card-inner md:card-inner-desktop p-4">
+              <div className="card-inner md:card-inner-desktop">
                 <h2 className="text-xl font-bold mb-2 text-center">💼 What I Do</h2>
                 <p style={{ textAlign: 'justify' }}>
                   Interning at Securities Commission Malaysia, contributing to internal system enhancements using technologies like .NET, Outsystems, and Office 365.<br/>
@@ -44,7 +44,7 @@ export default function AboutMe() {
           </div>
           <div className="card-animate">
             <Card>
-              <div className="card-inner md:card-inner-desktop p-4">
+              <div className="card-inner md:card-inner-desktop">
                 <h2 className="text-xl font-bold mb-2 text-center">🧠 What I Enjoy</h2>
                 <ul className="list-disc pl-6 text-gray-700">
                   <li>Solving complex problems with simple code.</li>
@@ -56,7 +56,7 @@ export default function AboutMe() {
           </div>
           <div className="card-animate">
             <Card>
-              <div className="card-inner md:card-inner-desktop p-4">
+              <div className="card-inner md:card-inner-desktop">
                 <h2 className="text-xl font-bold mb-2 text-center">📸 Beyond Work</h2>
                 <ul className="list-disc pl-6 text-gray-700">
                   <li>Amateur photographer capturing everyday moments and landscapes.</li>
@@ -68,7 +68,7 @@ export default function AboutMe() {
           </div>
           <div className="card-animate">
             <Card>
-              <div className="card-inner md:card-inner-desktop p-4">
+              <div className="card-inner md:card-inner-desktop">
                 <h2 className="text-xl font-bold mb-2 text-center">🛤 Life Philosophy</h2>
                 <p style={{ textAlign: 'justify' }}>
                   "Make it work, make it right, make it fast."<br/>
@@ -79,7 +79,7 @@ export default function AboutMe() {
           </div>
           <div className="card-animate">
             <Card>
-              <div className="card-inner md:card-inner-desktop p-4">
+              <div className="card-inner md:card-inner-desktop">
                 <h2 className="text-xl font-bold mb-2 text-center">🔍 Random Facts</h2>
                 <ul className="list-disc pl-6 text-gray-700">
                   <li>I love local food (Nasi Lemak supremacy <span role="img" aria-label="nasi lemak">🍛</span>).</li>

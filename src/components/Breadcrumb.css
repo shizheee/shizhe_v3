@@ -1,7 +1,7 @@
 @media (min-width: 768px) {
-  nav[aria-label='Breadcrumb'] {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+  .breadcrumb {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
   }
 }
 /* Modern breadcrumb navigation styles */

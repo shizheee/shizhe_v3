@@ -87,7 +87,6 @@
   background: linear-gradient(270deg, #e0e7ff, #fbcfe8, #bbf7d0, #fef9c3, #bae6fd, #fca5a5, #f0abfc, #a7f3d0, #e0e7ff);
   background-size: 1800% 1800%;
   animation: bgGradientMove 12s ease-in-out infinite;
-  border-radius: 1rem;
   padding: 2rem;
 }
 
@@ -181,7 +180,6 @@
 /* Card border radius for desktop, none for mobile */
 .card-animate {
   box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1.5px 6px rgba(0,0,0,0.08);
-  border-radius: 1rem;
   background: #fff;
   transition: box-shadow 0.3s, transform 0.3s;
   margin-bottom: 1.5rem;
@@ -217,7 +215,7 @@
 }
 
 .card-inner {
-  padding: 0;
+  padding: 4rem 20rem;
 }
 
 @media (max-width: 768px) {
@@ -228,10 +226,7 @@
     border-radius: 0;
   }
   .skills-inner-bg {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    padding: 1.25rem;
   }
   .card-inner {
     padding: 1.25rem;
@@ -270,4 +265,30 @@
   background: #ebeffe;
   min-height: 100vh;
   padding-bottom: 0;
+}
+
+@media (min-width: 1400px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+        max-width: none !important;
+    }
+}
+@media (min-width: 1200px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl {
+        max-width: none !important;
+    }
+}
+@media (min-width: 992px) {
+    .container, .container-lg, .container-md, .container-sm {
+        max-width: none !important;
+    }
+}
+@media (min-width: 768px) {
+    .container, .container-md, .container-sm {
+        max-width: none !important;
+    }
+}
+@media (min-width: 576px) {
+    .container, .container-sm {
+        max-width: none !important;
+    }
 }

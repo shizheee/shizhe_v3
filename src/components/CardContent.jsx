@@ -6,12 +6,12 @@ import './CardContent.css';
 export default function Home() {
   return (
     <div className="cardcontent-bg">
-      <div className="container mx-auto px-0 md:p-4 md:pt-12">
+      <div className="container mx-0 px-0 md:p-4 md:pt-12 md:w-full">
         <div className="flex flex-col md:flex-row md:space-x-4">
           {/* Profile Card */}
           <div className="w-full md:basis-1/2 md:flex-1 card-animate profile-card">
             <Card>
-              <div className="card-inner profile-content text-gray-800 p-4 md:p-0">
+              <div className="card-inner profile-content text-gray-800 md:p-0">
                 <h1 style={{ color: '#8261d5' }}>
                   Shizhe's Homepage
                 </h1>
@@ -20,16 +20,16 @@ export default function Home() {
                 </p>
                 <div style={{ marginTop: 12 }}>
                   <Link to="/aboutme" className="text-blue-600 hover:underline font-semibold text-sm">
-                    Learn More About Me &gt;
+                    Learn more about me &gt;
                   </Link>
                 </div>
               </div>
             </Card>
           </div>
           {/* Blog Card */}
-          <div className="w-full md:basis-1/2 md:flex-1 card-animate blog-card" style={{ background: '#dbeaffff', borderRadius: '1rem' }}>
+          <div className="w-full md:basis-1/2 md:flex-1 card-animate blog-card" style={{ background: '#dbeaffff' }}>
             <Card>
-              <div className="card-inner blog-content text-gray-800 p-4 md:p-0">
+              <div className="card-inner blog-content text-gray-800 md:p-0">
                 <h1>
                   My Blog
                 </h1>
@@ -45,10 +45,29 @@ export default function Home() {
             </Card>
           </div>
         </div>
+        {/* ...removed TryGPT card... */}
+        <div className="w-full md:basis-1/2 md:flex-1 card-animate print-card">
+            <Card>
+              <div className="card-inner print-content text-gray-800 md:p-8">
+                <h1 style={{  }}>
+                  3D Printing
+                </h1>
+                <p style={{ textAlign: 'justify' }}>
+                  I offer 3D printing and modeling services for hobbyists, makers, and anyone interested in custom parts or creative projects. From prototyping electronics to making personalized gifts, I love turning digital designs into real-world objects.
+                </p>
+                <div style={{ marginTop: 12 }}>
+                  <Link to="/3dprinting" className="text-pink-600 hover:underline font-semibold text-sm">
+                    Learn more about 3D printing &gt;
+                  </Link>
+                </div>
+              </div>
+            </Card>
+          </div>
+        
         {/* Skills & Tech Stack */}
         <div className="w-full md:basis-1/2 md:flex-1 card-animate skills-bg md:p-0 mt-4 md:mt-0">
           <Card>
-            <div className="card-inner skills-inner-bg p-4 md:p-0">
+            <div className="card-inner skills-inner-bg md:p-0">
               <div className="flex justify-center">
                 <h2 className="text-xl font-bold mb-2 float-title">
                   Technical Skills
