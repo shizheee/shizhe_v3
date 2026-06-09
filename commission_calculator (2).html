@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hair Removal Commission Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f6f2; --surface:#fff; --surface2:#f0ede6;
+  --border:#e0dbd0; --border2:#c8c2b4;
+  --text:#1a1916; --text2:#6b6660; --text3:#a09a92;
+  --accent:#2d5a3d; --accent-light:#e8f2eb;
+  --gold:#c17f24; --gold-light:#fef8ec;
+  --danger:#b94040; --danger-light:#fdf0f0;
+  --blue:#2563a8; --blue-light:#eff4fd;
+  --radius:8px; --radius-lg:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:2rem 1.5rem}
+header{margin-bottom:1.5rem}
+header h1{font-size:22px;font-weight:600;letter-spacing:-.5px}
+header p{font-size:13px;color:var(--text2);margin-top:4px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:1.25rem}
+.card-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+.ctrl-group{display:flex;align-items:center;gap:8px}
+.ctrl-group label{font-size:12px;color:var(--text2);font-weight:500;white-space:nowrap}
+
+input[type=text],input[type=number],input[type=month],select{
+  font-family:'DM Mono',monospace;font-size:13px;padding:6px 10px;
+  border:1px solid var(--border2);border-radius:var(--radius);
+  background:var(--bg);color:var(--text)
+}
+input[type=text]{font-family:'Sora',sans-serif}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.name-input{width:220px;font-size:14px;font-weight:500}
+.divider{width:1px;height:28px;background:var(--border);flex-shrink:0}
+
+.btn{font-family:'Sora',sans-serif;font-size:12px;font-weight:500;padding:7px 16px;border-radius:var(--radius);cursor:pointer;border:1px solid;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:#234a32}
+.btn-secondary{background:#e8f2eb;color:var(--accent);border-color:#b6d9c0}
+.btn-secondary:hover{background:#d4eadb}
+.btn-blue{background:var(--blue-light);color:var(--blue);border-color:#93b8e0}
+.btn-blue:hover{background:#dce9f8}
+.btn-outline{background:transparent;color:var(--text2);border-color:var(--border2)}
+.btn-outline:hover{background:var(--surface2);color:var(--text)}
+.btn-danger-sm{background:transparent;color:var(--danger);border:1px solid transparent;border-radius:5px;padding:3px 7px;font-size:13px;cursor:pointer;transition:all .12s;font-family:'Sora',sans-serif}
+.btn-danger-sm:hover{background:var(--danger-light);border-color:var(--danger)}
+.icon-btn{background:none;border:none;cursor:pointer;padding:4px 5px;border-radius:5px;color:var(--text3);font-size:13px;transition:all .12s;line-height:1}
+.icon-btn:hover{background:var(--surface2);color:var(--text)}
+
+/* ── Item manager ── */
+.mgr-panel{display:none}
+.mgr-panel.open{display:block}
+
+.items-table{width:100%;border-collapse:collapse;margin-top:10px}
+.items-table th{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;padding:6px 8px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface2)}
+.items-table th:last-child,.items-table th:nth-last-child(2){text-align:center}
+.items-table td{padding:5px 6px;border-bottom:1px solid var(--border);vertical-align:middle}
+.items-table tr:last-child td{border-bottom:none}
+.items-table tr:hover td{background:#fafaf8}
+
+.items-table td input[type=text]{
+  width:100%;font-size:13px;padding:5px 8px;border:1px solid transparent;border-radius:6px;background:transparent
+}
+.items-table td input[type=text]:hover{border-color:var(--border2);background:var(--bg)}
+.items-table td input[type=text]:focus{border-color:var(--accent);background:#fff;outline:none}
+.items-table td input[type=number]{
+  width:80px;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--accent);
+  padding:5px 8px;border:1px solid transparent;border-radius:6px;background:transparent;text-align:right
+}
+.items-table td input[type=number]:hover{border-color:var(--border2);background:var(--bg)}
+.items-table td input[type=number]:focus{border-color:var(--accent);background:#fff;outline:none}
+
+.drag-handle{cursor:grab;color:var(--text3);font-size:16px;padding:2px 4px;user-select:none}
+.drag-handle:active{cursor:grabbing}
+.items-table tr.dragging{opacity:.4}
+.items-table tr.drag-over td{border-top:2px solid var(--accent)}
+
+.rate-badge{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;background:var(--accent-light);color:var(--accent);border-radius:4px;padding:1px 6px;font-weight:500}
+
+.add-item-row{display:flex;gap:8px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.add-item-row input[type=text]{flex:1;font-size:13px;padding:7px 10px}
+.add-item-row input[type=number]{width:90px;font-family:'DM Mono',monospace;font-size:13px;padding:7px 10px}
+
+/* Table */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.25rem;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:680px;font-size:12px}
+
+thead th{background:var(--surface2);padding:7px 6px;text-align:center;font-size:10px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap;letter-spacing:.2px}
+thead th.left{text-align:left;padding-left:12px}
+thead .group-treat{background:#fef8ec;color:var(--gold)}
+thead .group-result{background:#eaf2ec;color:var(--accent)}
+
+tbody tr{transition:background .1s}
+tbody tr:hover{background:var(--bg)}
+tbody tr.weekend{background:#fafaf7}
+tbody td{padding:4px 4px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle}
+tbody td.day-cell{text-align:left;padding-left:10px;font-size:12px;white-space:nowrap;min-width:100px}
+tbody td:nth-child(odd of .val-cell) {
+  border-right: 1px solid #aeaeae;
+}
+
+tbody td input[type=number]{font-family:'DM Mono',monospace;font-size:11px;text-align:center;border:1px solid transparent;border-radius:5px;background:transparent;color:var(--text);padding:3px 2px;width:48px;transition:border-color .12s,background .12s}
+tbody td input[type=number]:hover{border-color:var(--border2);background:var(--bg)}
+tbody td input[type=number]:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent);background:#fff}
+
+tbody td.cal-total{font-family:'DM Mono',monospace;font-weight:600;background:var(--accent-light);color:var(--accent);font-size:11.5px}
+tbody td.cal-scom{font-family:'DM Mono',monospace;font-weight:500;background:var(--gold-light);color:var(--gold);font-size:11px}
+
+tfoot tr{background:var(--surface2)}
+tfoot td{padding:7px 6px;font-family:'DM Mono',monospace;font-size:11.5px;font-weight:500;text-align:center;border-top:2px solid var(--border2);color:var(--text)}
+tfoot td.left{text-align:left;padding-left:12px;font-family:'Sora',sans-serif;font-size:10.5px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px}
+tfoot td.total-final{color:var(--accent);font-size:13px;font-weight:600}
+
+/* Summary */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:2rem}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:13px 15px}
+.metric .lbl{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.metric .val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--text)}
+.metric.green .val{color:var(--accent)}
+.metric.gold .val{color:var(--gold)}
+.metric.total{border-color:var(--accent);background:var(--accent-light)}
+.metric.total .val{color:var(--accent);font-size:21px}
+
+/* ── PRINT ── */
+@media print {
+  @page{size:A4 landscape;margin:7mm}
+  body{background:#fff;padding:0;font-size:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .no-print{display:none !important}
+  .print-header{display:block !important}
+  header{display:none}
+  .table-wrap{border:.5px solid #bbb;border-radius:4px;overflow:visible;margin-bottom:3mm}
+  table{min-width:unset;width:100%;font-size:7.5px;table-layout:fixed}
+  thead th{padding:4px 3px;font-size:7px;background:#f5f5f0 !important}
+  thead .group-treat{background:#fef8ec !important}
+  thead .group-result{background:#eaf2ec !important}
+  tbody td{padding:2.5px 2px;border-bottom:.5px solid #e0e0d8}
+  tbody td.day-cell{min-width:unset;font-size:7.5px;padding-left:4px}
+  tbody td input[type=number]{display:none}
+  tbody td.val-cell{font-family:'DM Mono',monospace;font-size:7.5px}
+  tbody td.cal-total{font-size:7.5px;background:#e8f2eb !important;color:#2d5a3d !important;padding:2.5px 3px}
+  tbody td.cal-scom{font-size:7px;background:#fef8ec !important;color:#c17f24 !important;padding:2.5px 3px}
+  tbody tr.weekend{background:#fafaf7 !important}
+  tfoot td{padding:4px 3px;font-size:7.5px;border-top:1px solid #999;background:#f0ede6 !important}
+  tfoot td.left{font-size:7px}
+  tfoot td.total-final{font-size:9px;color:#2d5a3d !important}
+  .summary{grid-template-columns:repeat(6,1fr);gap:3px;margin-bottom:3mm}
+  .metric{padding:5px 7px;border-radius:3px;border:.5px solid #ddd !important}
+  .metric .lbl{font-size:6.5px;margin-bottom:2px}
+  .metric .val{font-size:10px}
+  .metric.total{background:#e8f2eb !important}
+  .metric.total .val{font-size:12px;color:#2d5a3d !important}
+  .metric.green .val{color:#2d5a3d !important}
+  .metric.gold .val{color:#c17f24 !important}
+}
+.print-header{display:none}
+
+@media print {
+  tbody td.val-cell input {
+    display: none !important;
+  }
+
+  tbody td.val-cell::after {
+    content: attr(data-val);
+    font-family: 'DM Mono', monospace;
+    font-size: 7.5px;
+    color: #111;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="no-print">
+  <h1>Hair Removal Commission Calculator</h1>
+  <p>Track treatment commissions per day — manage items, rates &amp; monthly rows</p>
+</header>
+
+<!-- Print header -->
+<div class="print-header" id="printHeader">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #2d5a3d;padding-bottom:3mm;margin-bottom:3mm">
+    <div>
+      <div style="font-size:14px;font-weight:600;color:#2d5a3d;font-family:'Sora',sans-serif">Hair Removal Commission Report</div>
+      <div style="font-size:9px;color:#888;margin-top:1mm;font-family:'Sora',sans-serif" id="ph-period"></div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:13px;font-weight:600;font-family:'Sora',sans-serif" id="ph-name"></div>
+      <div style="font-size:8px;color:#888;font-family:'Sora',sans-serif">Sales commission: <span id="ph-pct"></span>% &nbsp;|&nbsp; Printed: <span id="ph-date"></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Staff & Settings -->
+<div class="card no-print">
+  <div class="card-title">Staff &amp; Settings</div>
+  <div class="row">
+    <div class="ctrl-group">
+      <label>Staff name</label>
+      <input type="text" id="staffName" class="name-input" placeholder="e.g. Sarah Lim">
+    </div>
+    <div class="divider"></div>
+    <div class="ctrl-group">
+      <label>Sales commission</label>
+      <input type="number" id="salesPct" value="5" min="0" max="100" step="0.1" style="width:68px">
+      <span style="font-size:13px;color:var(--text2)">%</span>
+    </div>
+    <div class="divider"></div>
+    <div class="ctrl-group">
+      <label>Currency</label>
+      <select id="currency">
+        <option value="RM">RM</option>
+        <option value="$">$</option>
+        <option value="£">£</option>
+        <option value="€">€</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Item Manager -->
+<div class="card no-print">
+  <div class="card-title">
+    <span>Item &amp; Commission Rate Manager</span>
+    <button class="btn btn-blue" style="margin-left:auto;font-size:11px;padding:5px 12px" onclick="toggleMgr()">
+      <span id="mgr-toggle-label">▾ Manage items</span>
+    </button>
+  </div>
+
+  <!-- Item summary chips when closed -->
+  <div id="items-chips" class="row" style="flex-wrap:wrap;gap:6px"></div>
+
+  <!-- Full manager panel -->
+  <div class="mgr-panel" id="mgrPanel">
+    <table class="items-table" id="itemsTable">
+      <thead>
+        <tr>
+          <th style="width:28px"></th>
+          <th style="width:32px">#</th>
+          <th>Item name</th>
+          <th style="width:110px;text-align:right">Rate / unit</th>
+          <th style="width:44px;text-align:center">Del</th>
+        </tr>
+      </thead>
+      <tbody id="itemsTbody"></tbody>
+    </table>
+    <div class="add-item-row">
+      <input type="text" id="new-item-name" placeholder="New item name (e.g. Underarm)" style="flex:1">
+      <input type="number" id="new-item-rate" placeholder="Rate" min="0" step="0.1" style="width:90px">
+      <button class="btn btn-primary" onclick="addItem()">+ Add item</button>
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-top:8px">
+      Drag ☰ to reorder · Changes apply to the calculator table immediately
+    </p>
+  </div>
+</div>
+
+<!-- Month / Row Controls -->
+<div class="card no-print">
+  <div class="card-title">Rows</div>
+  <div class="row">
+    <div class="ctrl-group">
+      <label>Month</label>
+      <input type="month" id="monthPicker">
+    </div>
+    <button class="btn btn-secondary" onclick="generateMonth()">⟳ Generate month rows</button>
+    <div class="divider"></div>
+    <button class="btn btn-outline" onclick="addRow(null)">+ Add single row</button>
+    <button class="btn btn-outline" onclick="clearAll(false)" style="color:var(--danger);border-color:var(--border2)">Clear all</button>
+    <div class="divider"></div>
+    <button class="btn btn-primary" onclick="printPage()" style="margin-left:auto">🖨 Print / Save PDF</button>
+  </div>
+</div>
+
+<!-- Commission table -->
+<div class="table-wrap">
+<table id="main-table">
+<thead>
+  <tr>
+    <th class="left" rowspan="2" style="min-width:100px;width:100px">Date</th>
+    <th rowspan="2" style="min-width:68px;width:72px">Daily<br>Sales</th>
+    <th colspan="7" class="group-treat" id="treat-group-header">Treatment Commission (qty × rate)</th>
+    <th colspan="2" class="group-result">Result</th>
+    <th rowspan="2" class="no-print" style="width:30px;background:var(--surface2)"></th>
+  </tr>
+  <tr id="thead-labels">
+    <th class="group-result" style="min-width:68px;width:74px">Sales Com</th>
+    <th class="group-result" style="min-width:72px;width:80px;font-weight:700">Total Com</th>
+  </tr>
+</thead>
+<tbody id="rows"></tbody>
+<tfoot>
+  <tr id="foot-row">
+    <td class="left">TOTAL</td>
+    <td id="f-sales">—</td>
+    <td id="f-scom">—</td>
+    <td id="f-total" class="total-final">—</td>
+    <td class="no-print"></td>
+  </tr>
+</tfoot>
+</table>
+</div>
+
+<!-- Summary -->
+<div class="summary">
+  <div class="metric"><div class="lbl">Total sales</div><div class="val" id="s-sales">—</div></div>
+  <div class="metric green"><div class="lbl">Treatment commission</div><div class="val" id="s-tcom">—</div></div>
+  <div class="metric gold"><div class="lbl">Sales com (<span id="s-pct">5</span>%)</div><div class="val" id="s-scom">—</div></div>
+  <div class="metric total"><div class="lbl">Total commission</div><div class="val" id="s-total">—</div></div>
+  <div class="metric"><div class="lbl">Active days</div><div class="val" id="s-days">—</div></div>
+  <div class="metric"><div class="lbl">Avg daily com</div><div class="val" id="s-avg">—</div></div>
+</div>
+
+<script>
+/* ─── State ─── */
+let TREATMENTS = [
+  { id:1, name:'Full Leg / Brazilian',       rate:5.4 },
+  { id:2, name:'Neck / Armpit / Chin',       rate:1.2 },
+  { id:3, name:'Forearm / Half Face / Belly',rate:1.7 },
+  { id:4, name:'Finger / Toe / Lip',         rate:0.8 },
+  { id:5, name:'Lower Leg / Thigh / Back',   rate:2.5 },
+  { id:6, name:'Full Face / Full Arm',       rate:2.1 },
+  { id:7, name:'Bikini',                     rate:4.0 },
+  { id:7, name:'Full Body & Face',             rate:26.4 },
+  { id:7, name:'Full body',                   rate:24.3 },
+];
+let nextTid = 8;
+let rows = [], rowId = 0;
+let dragSrc = null;
+
+const DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+/* ─── Helpers ─── */
+const getCur  = () => document.getElementById('currency').value;
+const getPct  = () => (parseFloat(document.getElementById('salesPct').value)||5)/100;
+const fmt     = n  => getCur()+' '+n.toFixed(2);
+const set     = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+
+/* ─── Item Manager ─── */
+function toggleMgr() {
+  const p = document.getElementById('mgrPanel');
+  const open = p.classList.toggle('open');
+  document.getElementById('mgr-toggle-label').textContent = open ? '▴ Hide' : '▾ Manage items';
+  document.getElementById('items-chips').style.display = open ? 'none' : '';
+}
+
+function renderChips() {
+  const c = document.getElementById('items-chips');
+  c.innerHTML = TREATMENTS.map(t =>
+    `<span class="rate-badge">${t.name.split('/')[0].trim()} ×${t.rate}</span>`
+  ).join('');
+}
+
+function renderItemsTable() {
+  const tbody = document.getElementById('itemsTbody');
+  tbody.innerHTML = '';
+  TREATMENTS.forEach((t, i) => {
+    const tr = document.createElement('tr');
+    tr.dataset.tid = t.id;
+    tr.draggable = true;
+    tr.innerHTML = `
+      <td><span class="drag-handle" title="Drag to reorder">☰</span></td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text3);text-align:center">${i+1}</td>
+      <td><input type="text" value="${t.name}" oninput="updateItem(${t.id},'name',this.value)" placeholder="Item name"></td>
+      <td style="text-align:right">
+        <input type="number" value="${t.rate}" min="0" step="0.1" oninput="updateItem(${t.id},'rate',this.value)">
+      </td>
+      <td style="text-align:center">
+        <button class="btn-danger-sm" onclick="removeItem(${t.id})" title="Delete item">✕</button>
+      </td>`;
+
+    /* Drag events */
+    tr.addEventListener('dragstart', e => {
+      dragSrc = tr;
+      tr.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    tr.addEventListener('dragend', () => {
+      tr.classList.remove('dragging');
+      document.querySelectorAll('#itemsTbody tr').forEach(r => r.classList.remove('drag-over'));
+    });
+    tr.addEventListener('dragover', e => {
+      e.preventDefault();
+      document.querySelectorAll('#itemsTbody tr').forEach(r => r.classList.remove('drag-over'));
+      if (tr !== dragSrc) tr.classList.add('drag-over');
+    });
+    tr.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!dragSrc || dragSrc === tr) return;
+      const srcId = parseInt(dragSrc.dataset.tid);
+      const dstId = parseInt(tr.dataset.tid);
+      const si = TREATMENTS.findIndex(x=>x.id===srcId);
+      const di = TREATMENTS.findIndex(x=>x.id===dstId);
+      const [item] = TREATMENTS.splice(si,1);
+      TREATMENTS.splice(di,0,item);
+      afterItemChange();
+    });
+
+    tbody.appendChild(tr);
+  });
+}
+
+function updateItem(tid, field, val) {
+  const t = TREATMENTS.find(x=>x.id===tid);
+  if (!t) return;
+  if (field==='rate') t.rate = parseFloat(val)||0;
+  else t.name = val;
+  afterItemChange();
+}
+
+function removeItem(tid) {
+  if (TREATMENTS.length <= 1) return alert('At least one item is required.');
+  if (!confirm('Remove this item? Existing qty data for this column will be lost.')) return;
+  const idx = TREATMENTS.findIndex(x=>x.id===tid);
+  TREATMENTS.splice(idx,1);
+  // Strip that column from all rows
+  rows.forEach(r => r.tqty.splice(idx,1));
+  afterItemChange();
+}
+
+function addItem() {
+  const nameEl = document.getElementById('new-item-name');
+  const rateEl = document.getElementById('new-item-rate');
+  const name = nameEl.value.trim();
+  const rate = parseFloat(rateEl.value)||0;
+  if (!name) { nameEl.focus(); return; }
+  TREATMENTS.push({ id: nextTid++, name, rate });
+  rows.forEach(r => r.tqty.push(0));
+  nameEl.value = '';
+  rateEl.value = '';
+  nameEl.focus();
+  afterItemChange();
+}
+
+function afterItemChange() {
+  renderItemsTable();
+  renderChips();
+  rebuildHeaders();
+  // recalc is called inside rebuildHeaders
+}
+
+/* ─── Month / Row controls ─── */
+(function(){
+  const now = new Date();
+  document.getElementById('monthPicker').value =
+    now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+})();
+
+function generateMonth() {
+  const val = document.getElementById('monthPicker').value;
+  if (!val) return alert('Please select a month first.');
+  const [year,month] = val.split('-').map(Number);
+  const days = new Date(year,month,0).getDate();
+  if (rows.length>0 && !confirm(`Replace existing ${rows.length} row(s) with ${days} days for ${MONTHS[month-1]} ${year}?`)) return;
+  clearAll(true);
+  for (let d=1;d<=days;d++) {
+    const date = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    addRow(date);
+  }
+}
+
+function clearAll(silent) {
+  if (!silent && rows.length>0 && !confirm('Clear all rows?')) return;
+  rows=[];
+  document.getElementById('rows').innerHTML='';
+  recalc();
+}
+
+function addRow(dateVal) {
+  const id = rowId++;
+  const now = new Date();
+  const defDate = dateVal||`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  const row = { id, date:defDate, sales:0, tqty:new Array(TREATMENTS.length).fill(0) };
+  rows.push(row);
+  renderRow(row);
+  recalc();
+}
+
+function getDayLabel(ds) {
+  if (!ds) return '';
+  return DAYS[new Date(ds+'T00:00:00').getDay()];
+}
+function isWeekend(ds) {
+  const d = new Date(ds+'T00:00:00').getDay();
+  return d===0||d===6;
+}
+
+function renderRow(r) {
+  const tbody = document.getElementById('rows');
+  const tr = document.createElement('tr');
+  tr.id='row-'+r.id;
+  if (isWeekend(r.date)) tr.classList.add('weekend');
+
+  const treatCells = TREATMENTS.map((_,i)=>
+    `<td class="val-cell" id="tqtd-${r.id}-${i}" data-val=""><input type="number" value="" min="0" step="1" placeholder="—" oninput="updateTqty(${r.id},${i},this.value)"></td>`
+  ).join('');
+
+  tr.innerHTML = `
+    <td class="day-cell">
+      <span style="font-size:9.5px;color:var(--text3);display:inline-block;min-width:24px">${getDayLabel(r.date)}</span>
+      <span style="font-weight:500">${r.date.slice(8)}</span>
+      <span style="font-size:10px;color:var(--text3)"> ${r.date.slice(0,7)}</span>
+    </td>
+    <td class="val-cell" id="std-${r.id}" data-val="">
+      <input type="number" value="" min="0" step="0.01" placeholder="0.00" oninput="updateRow(${r.id},'sales',this.value)" style="width:60px">
+    </td>
+    ${treatCells}
+    <td class="cal-scom" id="sc-${r.id}">—</td>
+    <td class="cal-total" id="tc-${r.id}">—</td>
+    <td class="no-print"><button class="btn-danger-sm" onclick="deleteRow(${r.id})" title="Delete">✕</button></td>`;
+  tbody.appendChild(tr);
+}
+
+/* ─── Header / footer rebuild ─── */
+function rebuildHeaders() {
+  /* thead labels row */
+  const labelRow = document.getElementById('thead-labels');
+  const allTh = labelRow.querySelectorAll('th');
+  for (let i=allTh.length-3;i>=0;i--) allTh[i].remove();
+  const salesTh = labelRow.querySelectorAll('th')[0];
+  TREATMENTS.forEach(t => {
+    const th = document.createElement('th');
+    th.className='group-treat';
+    th.style.cssText='min-width:50px;white-space:normal;line-height:1.3;font-size:9px;padding:5px 3px';
+    th.innerHTML=`${t.name.split('/')[0].trim()}<br><span style="font-weight:400;opacity:.7">×${t.rate}</span>`;
+    labelRow.insertBefore(th,salesTh);
+  });
+  document.getElementById('treat-group-header').colSpan = TREATMENTS.length;
+
+  /* tfoot */
+  const foot = document.getElementById('foot-row');
+  const footTds = foot.querySelectorAll('td');
+  for (let i=footTds.length-4;i>=1;i--) footTds[i].remove();
+  const fScom = foot.querySelector('#f-scom');
+  TREATMENTS.forEach((_,i) => {
+    const td=document.createElement('td');
+    td.id='f-tr'+i;
+    td.style.cssText="font-family:'DM Mono',monospace;font-size:11px";
+    td.textContent='—';
+    foot.insertBefore(td,fScom);
+  });
+
+  /* data rows */
+  rows.forEach(r => {
+    const tr = document.getElementById('row-'+r.id);
+    if (!tr) return;
+    const scTd = tr.querySelector('#sc-'+r.id);
+    let td = tr.querySelector('#std-'+r.id).nextElementSibling;
+    while (td&&td!==scTd){const n=td.nextElementSibling;td.remove();td=n;}
+    TREATMENTS.forEach((_,i)=>{
+      const ntd=document.createElement('td');
+      ntd.className='val-cell';
+      ntd.id=`tqtd-${r.id}-${i}`;
+      ntd.dataset.val=r.tqty[i]||'';
+      ntd.innerHTML=`<input type="number" value="${r.tqty[i]||''}" min="0" step="1" placeholder="—" oninput="updateTqty(${r.id},${i},this.value)">`;
+      tr.insertBefore(ntd,scTd);
+    });
+  });
+  recalc();
+}
+
+/* ─── Data updates ─── */
+function updateRow(id,field,val) {
+  const r=rows.find(r=>r.id===id);
+  if(!r) return;
+  r[field]=parseFloat(val)||0;
+  const el=document.getElementById('std-'+id);
+  if(el) el.dataset.val=r.sales?r.sales.toFixed(2):'';
+  recalc();
+}
+
+function updateTqty(id,idx,val) {
+  const r=rows.find(r=>r.id===id);
+  if(!r) return;
+  while(r.tqty.length<=idx) r.tqty.push(0);
+  r.tqty[idx]=parseFloat(val)||0;
+  const td=document.getElementById(`tqtd-${id}-${idx}`);
+  if(td) td.dataset.val=r.tqty[idx]||'';
+  recalc();
+}
+
+function deleteRow(id) {
+  rows=rows.filter(r=>r.id!==id);
+  const tr=document.getElementById('row-'+id);
+  if(tr) tr.remove();
+  recalc();
+}
+
+/* ─── Calculations ─── */
+function treatmentCom(r){ return r.tqty.reduce((s,q,i)=>s+(q||0)*(TREATMENTS[i]?.rate||0),0); }
+function salesCom(r)    { return (r.sales||0)*getPct(); }
+
+function recalc() {
+  let totSales=0,totTC=0,totSC=0,totTotal=0,activeDays=0;
+  const totT=new Array(TREATMENTS.length).fill(0);
+
+  rows.forEach(r=>{
+    const tc=treatmentCom(r),sc=salesCom(r),tot=tc+sc;
+    totSales+=r.sales||0;totTC+=tc;totSC+=sc;totTotal+=tot;
+    r.tqty.forEach((q,i)=>{if(i<totT.length)totT[i]+=q||0;});
+    if(tot>0) activeDays++;
+    const scEl=document.getElementById('sc-'+r.id);
+    const tcEl=document.getElementById('tc-'+r.id);
+    if(scEl) scEl.textContent=sc>0?fmt(sc):'—';
+    if(tcEl) tcEl.textContent=tot>0?fmt(tot):'—';
+  });
+
+  set('f-sales',getCur()+' '+totSales.toFixed(2));
+  totT.forEach((v,i)=>set('f-tr'+i,v||'—'));
+  set('f-scom',fmt(totSC));
+  set('f-total',fmt(totTotal));
+  set('s-sales',getCur()+' '+totSales.toFixed(2));
+  set('s-tcom',fmt(totTC));
+  set('s-scom',fmt(totSC));
+  set('s-total',fmt(totTotal));
+  set('s-days',activeDays);
+  set('s-avg',activeDays?fmt(totTotal/activeDays):'—');
+  set('s-pct',(getPct()*100).toFixed(1).replace('.0',''));
+}
+
+/* ─── Print ─── */
+function printPage() {
+  const name=document.getElementById('staffName').value.trim();
+  const monthVal=document.getElementById('monthPicker').value;
+  document.getElementById('ph-name').textContent=name||'Staff';
+  if(monthVal){
+    const [y,m]=monthVal.split('-');
+    document.getElementById('ph-period').textContent=MONTHS[parseInt(m)-1]+' '+y;
+  }
+  document.getElementById('ph-pct').textContent=(getPct()*100).toFixed(1).replace('.0','');
+  document.getElementById('ph-date').textContent=new Date().toLocaleDateString();
+  window.print();
+}
+
+document.getElementById('salesPct').addEventListener('input',recalc);
+document.getElementById('currency').addEventListener('change',recalc);
+
+/* ─── Init ─── */
+renderItemsTable();
+renderChips();
+rebuildHeaders();
+</script>
+</body>
+</html>
