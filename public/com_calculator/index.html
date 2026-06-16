@@ -2,648 +2,535 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hair Removal Commission Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mobile Commission Calculator - Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#f7f6f2; --surface:#fff; --surface2:#f0ede6;
-  --border:#e0dbd0; --border2:#c8c2b4;
-  --text:#1a1916; --text2:#6b6660; --text3:#a09a92;
-  --accent:#2d5a3d; --accent-light:#e8f2eb;
-  --gold:#c17f24; --gold-light:#fef8ec;
-  --danger:#b94040; --danger-light:#fdf0f0;
-  --blue:#2563a8; --blue-light:#eff4fd;
-  --radius:8px; --radius-lg:12px;
+  --bg: #f2f4f7; 
+  --surface: #ffffff; 
+  --surface-alt: #f9fafb;
+  --border: #e5e7eb; 
+  --border-focus: #d1d5db;
+  --text-main: #111827; 
+  --text-muted: #6b7280; 
+  --text-light: #9ca3af;
+  --primary: #0ea5e9; 
+  --primary-light: #e0f2fe;
+  --primary-dark: #0284c7;
+  --success: #10b981;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --radius: 12px; 
+  --radius-lg: 20px;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:2rem 1.5rem}
-header{margin-bottom:1.5rem}
-header h1{font-size:22px;font-weight:600;letter-spacing:-.5px}
-header p{font-size:13px;color:var(--text2);margin-top:4px}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); min-height: 100vh; padding: 12px 12px 100px 12px; }
 
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:1.25rem}
-.card-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+/* View & Animation */
+.view { display: none; width: 100%; max-width: 600px; margin: 0 auto; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+.view.active { display: block; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-.ctrl-group{display:flex;align-items:center;gap:8px}
-.ctrl-group label{font-size:12px;color:var(--text2);font-weight:500;white-space:nowrap}
+/* Cards & Text */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.card-title { font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+.card-subtitle { font-size: 13px; font-weight: 400; color: var(--text-muted); }
+.page-title { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
+.page-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
 
-input[type=text],input[type=number],input[type=month],select{
-  font-family:'DM Mono',monospace;font-size:13px;padding:6px 10px;
-  border:1px solid var(--border2);border-radius:var(--radius);
-  background:var(--bg);color:var(--text)
-}
-input[type=text]{font-family:'Sora',sans-serif}
-input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
-.name-input{width:220px;font-size:14px;font-weight:500}
-.divider{width:1px;height:28px;background:var(--border);flex-shrink:0}
+/* Forms */
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 13px; color: var(--text-muted); font-weight: 500; margin-bottom: 8px; }
+input[type=text], input[type=number], input[type=month] { width: 100%; font-family: 'Inter', sans-serif; font-size: 16px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-alt); color: var(--text-main); transition: all 0.2s; appearance: none; }
+input[type=number] { font-family: 'DM Mono', monospace; font-weight: 500; }
+input:focus { outline: none; border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 3px var(--primary-light); }
 
-.btn{font-family:'Sora',sans-serif;font-size:12px;font-weight:500;padding:7px 16px;border-radius:var(--radius);cursor:pointer;border:1px solid;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
-.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.btn-primary:hover{background:#234a32}
-.btn-secondary{background:#e8f2eb;color:var(--accent);border-color:#b6d9c0}
-.btn-secondary:hover{background:#d4eadb}
-.btn-blue{background:var(--blue-light);color:var(--blue);border-color:#93b8e0}
-.btn-blue:hover{background:#dce9f8}
-.btn-outline{background:transparent;color:var(--text2);border-color:var(--border2)}
-.btn-outline:hover{background:var(--surface2);color:var(--text)}
-.btn-danger-sm{background:transparent;color:var(--danger);border:1px solid transparent;border-radius:5px;padding:3px 7px;font-size:13px;cursor:pointer;transition:all .12s;font-family:'Sora',sans-serif}
-.btn-danger-sm:hover{background:var(--danger-light);border-color:var(--danger)}
-.icon-btn{background:none;border:none;cursor:pointer;padding:4px 5px;border-radius:5px;color:var(--text3);font-size:13px;transition:all .12s;line-height:1}
-.icon-btn:hover{background:var(--surface2);color:var(--text)}
+/* Buttons */
+.btn { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600; padding: 16px; border-radius: var(--radius); cursor: pointer; border: none; transition: all 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25); }
+.btn-primary:active { background: var(--primary-dark); }
+.btn-secondary { background: var(--surface-alt); color: var(--text-main); border: 1px solid var(--border); }
+.btn-secondary:active { background: #f3f4f6; }
+.btn-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--danger-light); color: var(--danger); display: flex; align-items: center; justify-content: center; border: none; font-size: 18px; }
+.btn-small-del { background: transparent; color: var(--danger); border: none; padding: 4px 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
 
-/* ── Item manager ── */
-.mgr-panel{display:none}
-.mgr-panel.open{display:block}
+/* Setup List */
+.mobile-list-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.mobile-list-item:last-child { border-bottom: none; }
 
-.items-table{width:100%;border-collapse:collapse;margin-top:10px}
-.items-table th{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;padding:6px 8px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface2)}
-.items-table th:last-child,.items-table th:nth-last-child(2){text-align:center}
-.items-table td{padding:5px 6px;border-bottom:1px solid var(--border);vertical-align:middle}
-.items-table tr:last-child td{border-bottom:none}
-.items-table tr:hover td{background:#fafaf8}
+/* Wizard Styles */
+.header-sticky { position: sticky; top: 0; background: var(--bg); padding: 12px 0 16px 0; z-index: 10; margin-bottom: 8px; }
+.progress-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; margin-top: 12px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
 
-.items-table td input[type=text]{
-  width:100%;font-size:13px;padding:5px 8px;border:1px solid transparent;border-radius:6px;background:transparent
-}
-.items-table td input[type=text]:hover{border-color:var(--border2);background:var(--bg)}
-.items-table td input[type=text]:focus{border-color:var(--accent);background:#fff;outline:none}
-.items-table td input[type=number]{
-  width:80px;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--accent);
-  padding:5px 8px;border:1px solid transparent;border-radius:6px;background:transparent;text-align:right
-}
-.items-table td input[type=number]:hover{border-color:var(--border2);background:var(--bg)}
-.items-table td input[type=number]:focus{border-color:var(--accent);background:#fff;outline:none}
+.sales-record-item { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px; }
+.treat-card { display: flex; flex-direction: column; gap: 12px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+.treat-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.treat-name { font-size: 15px; font-weight: 600; color: var(--text-main); }
+.treat-rate { font-size: 13px; color: var(--primary); font-weight: 600; background: var(--primary-light); padding: 2px 8px; border-radius: 6px; font-family: 'DM Mono', monospace; }
 
-.drag-handle{cursor:grab;color:var(--text3);font-size:16px;padding:2px 4px;user-select:none}
-.drag-handle:active{cursor:grabbing}
-.items-table tr.dragging{opacity:.4}
-.items-table tr.drag-over td{border-top:2px solid var(--accent)}
+.qty-ctrl { display: flex; align-items: center; justify-content: space-between; background: var(--surface-alt); padding: 6px; border-radius: var(--radius); border: 1px solid var(--border); }
+.qty-ctrl button { width: 48px; height: 44px; border-radius: 8px; border: none; background: var(--surface); font-size: 24px; color: var(--text-main); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.qty-ctrl button:active { background: #e5e7eb; }
+.qty-ctrl input { width: 80px; height: 44px; text-align: center; font-size: 18px; font-weight: 700; color: var(--primary); padding: 0; border: none; background: transparent; }
 
-.rate-badge{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;background:var(--accent-light);color:var(--accent);border-radius:4px;padding:1px 6px;font-weight:500}
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-top: 1px solid var(--border); display: flex; gap: 12px; z-index: 20; padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
 
-.add-item-row{display:flex;gap:8px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
-.add-item-row input[type=text]{flex:1;font-size:13px;padding:7px 10px}
-.add-item-row input[type=number]{width:90px;font-family:'DM Mono',monospace;font-size:13px;padding:7px 10px}
+/* Report Styles */
+.summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 12px; text-align: center; }
+.metric .lbl { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+.metric .val { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 700; color: var(--text-main); }
+.metric.total { background: var(--primary); border-color: var(--primary); }
+.metric.total .lbl, .metric.total .val { color: #fff; }
 
-/* Table */
-.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.25rem;overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:680px;font-size:12px}
+.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 24px; }
+table.res-table { width: 100%; border-collapse: collapse; min-width: 800px; font-size: 13px; }
+table.res-table th { background: var(--surface-alt); padding: 12px 8px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+table.res-table td { padding: 12px 8px; border-bottom: 1px solid var(--border); text-align: center; font-family: 'DM Mono', monospace; vertical-align: top; }
+table.res-table td.left { text-align: left; font-family: 'Inter', sans-serif; font-weight: 500; padding-left: 16px; }
+table.res-table td.desc-cell { text-align: left; font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text-muted); line-height: 1.4; white-space: nowrap; }
+table.res-table tr.weekend { background: #fdfbf7; }
+table.res-table tfoot td { font-weight: 700; border-top: 2px solid var(--border); background: var(--surface-alt); }
 
-thead th{background:var(--surface2);padding:7px 6px;text-align:center;font-size:10px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap;letter-spacing:.2px}
-thead th.left{text-align:left;padding-left:12px}
-thead .group-treat{background:#fef8ec;color:var(--gold)}
-thead .group-result{background:#eaf2ec;color:var(--accent)}
-
-tbody tr{transition:background .1s}
-tbody tr:hover{background:var(--bg)}
-tbody tr.weekend{background:#fafaf7}
-tbody td{padding:4px 4px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle}
-tbody td.day-cell{text-align:left;padding-left:10px;font-size:12px;white-space:nowrap;min-width:100px}
-tbody td:nth-child(odd of .val-cell) {
-  border-right: 1px solid #aeaeae;
-}
-
-tbody td input[type=number]{font-family:'DM Mono',monospace;font-size:11px;text-align:center;border:1px solid transparent;border-radius:5px;background:transparent;color:var(--text);padding:3px 2px;width:48px;transition:border-color .12s,background .12s}
-tbody td input[type=number]:hover{border-color:var(--border2);background:var(--bg)}
-tbody td input[type=number]:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent);background:#fff}
-
-tbody td.cal-total{font-family:'DM Mono',monospace;font-weight:600;background:var(--accent-light);color:var(--accent);font-size:11.5px}
-tbody td.cal-scom{font-family:'DM Mono',monospace;font-weight:500;background:var(--gold-light);color:var(--gold);font-size:11px}
-
-tfoot tr{background:var(--surface2)}
-tfoot td{padding:7px 6px;font-family:'DM Mono',monospace;font-size:11.5px;font-weight:500;text-align:center;border-top:2px solid var(--border2);color:var(--text)}
-tfoot td.left{text-align:left;padding-left:12px;font-family:'Sora',sans-serif;font-size:10.5px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px}
-tfoot td.total-final{color:var(--accent);font-size:13px;font-weight:600}
-
-/* Summary */
-.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:2rem}
-.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:13px 15px}
-.metric .lbl{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
-.metric .val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--text)}
-.metric.green .val{color:var(--accent)}
-.metric.gold .val{color:var(--gold)}
-.metric.total{border-color:var(--accent);background:var(--accent-light)}
-.metric.total .val{color:var(--accent);font-size:21px}
-
-/* ── PRINT ── */
+/* ================= 打印极度优化 ================= */
 @media print {
-  @page{size:A4 landscape;margin:7mm}
-  body{background:#fff;padding:0;font-size:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .no-print{display:none !important}
-  .print-header{display:block !important}
-  header{display:none}
-  .table-wrap{border:.5px solid #bbb;border-radius:4px;overflow:visible;margin-bottom:3mm}
-  table{min-width:unset;width:100%;font-size:7.5px;table-layout:fixed}
-  thead th{padding:4px 3px;font-size:7px;background:#f5f5f0 !important}
-  thead .group-treat{background:#fef8ec !important}
-  thead .group-result{background:#eaf2ec !important}
-  tbody td{padding:2.5px 2px;border-bottom:.5px solid #e0e0d8}
-  tbody td.day-cell{min-width:unset;font-size:7.5px;padding-left:4px}
-  tbody td input[type=number]{display:none}
-  tbody td.val-cell{font-family:'DM Mono',monospace;font-size:7.5px}
-  tbody td.cal-total{font-size:7.5px;background:#e8f2eb !important;color:#2d5a3d !important;padding:2.5px 3px}
-  tbody td.cal-scom{font-size:7px;background:#fef8ec !important;color:#c17f24 !important;padding:2.5px 3px}
-  tbody tr.weekend{background:#fafaf7 !important}
-  tfoot td{padding:4px 3px;font-size:7.5px;border-top:1px solid #999;background:#f0ede6 !important}
-  tfoot td.left{font-size:7px}
-  tfoot td.total-final{font-size:9px;color:#2d5a3d !important}
-  .summary{grid-template-columns:repeat(6,1fr);gap:3px;margin-bottom:3mm}
-  .metric{padding:5px 7px;border-radius:3px;border:.5px solid #ddd !important}
-  .metric .lbl{font-size:6.5px;margin-bottom:2px}
-  .metric .val{font-size:10px}
-  .metric.total{background:#e8f2eb !important}
-  .metric.total .val{font-size:12px;color:#2d5a3d !important}
-  .metric.green .val{color:#2d5a3d !important}
-  .metric.gold .val{color:#c17f24 !important}
-}
-.print-header{display:none}
-
-@media print {
-  tbody td.val-cell input {
-    display: none !important;
-  }
-
-  tbody td.val-cell::after {
-    content: attr(data-val);
-    font-family: 'DM Mono', monospace;
-    font-size: 7.5px;
-    color: #111;
-  }
+  @page { size: A4 landscape; margin: 8mm; }
+  body { background: #fff; padding: 0; }
+  
+  /* 解除宽度限制，让表格铺满 A4 纸 */
+  .view { max-width: none !important; width: 100% !important; margin: 0; }
+  .table-wrap { overflow: visible !important; border: 1px solid #aaa; margin-bottom: 0; }
+  
+  /* 隐藏多余元素 */
+  .no-print, .bottom-nav { display: none !important; }
+  .card { border: 1px solid #ddd; box-shadow: none; margin-bottom: 10px; padding: 12px; }
+  .metric { border: 1px solid #ddd; padding: 10px; }
+  
+  /* 调整表格字体以容纳更多列 */
+  table.res-table { font-size: 10px; min-width: 100%; }
+  table.res-table th { font-size: 9px; padding: 6px 4px; }
+  table.res-table td { padding: 6px 4px; }
+  table.res-table td.left { padding-left: 6px; }
+  table.res-table td.desc-cell { font-size: 9px; white-space: normal; min-width: 120px; }
 }
 </style>
 </head>
 <body>
 
-<header class="no-print">
-  <h1>Hair Removal Commission Calculator</h1>
-  <p>Track treatment commissions per day — manage items, rates &amp; monthly rows</p>
-</header>
+<div id="step1" class="view active">
+  <div class="page-title">Setup</div>
+  <div class="page-desc">Configure staff and rates.</div>
 
-<!-- Print header -->
-<div class="print-header" id="printHeader">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #2d5a3d;padding-bottom:3mm;margin-bottom:3mm">
-    <div>
-      <div style="font-size:14px;font-weight:600;color:#2d5a3d;font-family:'Sora',sans-serif">Hair Removal Commission Report</div>
-      <div style="font-size:9px;color:#888;margin-top:1mm;font-family:'Sora',sans-serif" id="ph-period"></div>
+  <div class="card">
+    <div class="card-title">1. Basic Info</div>
+    <div class="form-group">
+      <label>Staff Name</label>
+      <input type="text" id="s1-name" placeholder="e.g. Joy">
     </div>
-    <div style="text-align:right">
-      <div style="font-size:13px;font-weight:600;font-family:'Sora',sans-serif" id="ph-name"></div>
-      <div style="font-size:8px;color:#888;font-family:'Sora',sans-serif">Sales commission: <span id="ph-pct"></span>% &nbsp;|&nbsp; Printed: <span id="ph-date"></span></div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div class="form-group">
+        <label>Period</label>
+        <input type="month" id="s1-month">
+      </div>
+      <div class="form-group">
+        <label>Sales Comm (%)</label>
+        <input type="number" id="s1-comm" value="5" min="0" step="0.1">
+      </div>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span>2. Treatments</span>
+      <span class="card-subtitle" id="t-count">8 items</span>
+    </div>
+    <div id="s1-treatments-list"></div>
+    
+    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border);">
+      <div class="form-group">
+        <input type="text" id="new-t-name" placeholder="New treatment name">
+      </div>
+      <div style="display:flex; gap: 12px;">
+        <input type="number" id="new-t-rate" placeholder="Rate (e.g. 5.0)" step="0.1" style="flex:1;">
+        <button class="btn btn-secondary" style="width: auto; padding: 0 24px;" onclick="addTreatment()">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding-bottom: 24px;">
+    <button class="btn btn-primary" onclick="startWizard()">Start Daily Entry ➔</button>
   </div>
 </div>
 
-<!-- Staff & Settings -->
-<div class="card no-print">
-  <div class="card-title">Staff &amp; Settings</div>
-  <div class="row">
-    <div class="ctrl-group">
-      <label>Staff name</label>
-      <input type="text" id="staffName" class="name-input" placeholder="e.g. Sarah Lim">
+<div id="step2" class="view">
+  <div class="header-sticky">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+      <div>
+        <div style="font-size:22px; font-weight:700; color:var(--primary);" id="s2-date-title">Day 1</div>
+        <div style="font-size:13px; color:var(--text-muted); font-weight:500;" id="s2-date-sub">YYYY-MM-DD</div>
+      </div>
+      <div style="font-size:14px; font-weight:600; color:var(--text-light);" id="s2-counter">1 / 30</div>
     </div>
-    <div class="divider"></div>
-    <div class="ctrl-group">
-      <label>Sales commission</label>
-      <input type="number" id="salesPct" value="5" min="0" max="100" step="0.1" style="width:68px">
-      <span style="font-size:13px;color:var(--text2)">%</span>
+    <div class="progress-bar"><div class="progress-fill" id="s2-progress"></div></div>
+  </div>
+
+  <div class="card" style="border-color: var(--primary-light); background: #f0f9ff; padding: 16px;">
+    <div class="card-title" style="margin-bottom:12px; color:var(--primary-dark);">💰 Daily Sales Records</div>
+    
+    <div id="s2-sales-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom: 12px;">
+      </div>
+
+    <div style="display:flex; gap: 8px; align-items:center;">
+      <input type="text" id="s2-sale-desc" placeholder="Description" style="flex:1; font-size:14px; padding:10px;">
+      <input type="number" id="s2-sale-amt" placeholder="Amt" style="width:75px; text-align:center; font-size:14px; padding:10px;">
+      <button class="btn btn-primary" style="width:auto; padding:10px 14px;" onclick="addDailySale()">Add</button>
     </div>
-    <div class="divider"></div>
-    <div class="ctrl-group">
-      <label>Currency</label>
-      <select id="currency">
-        <option value="RM">RM</option>
-        <option value="$">$</option>
-        <option value="£">£</option>
-        <option value="€">€</option>
-      </select>
+    
+    <div style="margin-top:16px; font-size:16px; font-weight:700; color:var(--primary-dark); text-align:right; border-top: 1px dashed #bae6fd; padding-top: 12px;">
+      Today's Sales Total: <span id="s2-sales-total">0.00</span>
     </div>
+  </div>
+
+  <div id="s2-treatments-container"></div>
+
+  <div style="height: 40px;"></div> 
+
+  <div class="bottom-nav">
+    <button class="btn btn-secondary" id="btn-prev-day" onclick="navigateDay(-1)">← Prev</button>
+    <button class="btn btn-primary" id="btn-next-day" style="flex:2;" onclick="navigateDay(1)">Next Day →</button>
   </div>
 </div>
 
-<!-- Item Manager -->
-<div class="card no-print">
-  <div class="card-title">
-    <span>Item &amp; Commission Rate Manager</span>
-    <button class="btn btn-blue" style="margin-left:auto;font-size:11px;padding:5px 12px" onclick="toggleMgr()">
-      <span id="mgr-toggle-label">▾ Manage items</span>
-    </button>
+<div id="step3" class="view">
+  <div class="no-print" style="margin-bottom: 20px;">
+    <div class="page-title">Final Report</div>
+    <div class="page-desc">Review your monthly summary.</div>
   </div>
 
-  <!-- Item summary chips when closed -->
-  <div id="items-chips" class="row" style="flex-wrap:wrap;gap:6px"></div>
+  <div class="card" style="padding: 16px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div>
+        <div style="font-size:20px; font-weight:700;" id="r-name">Staff Name</div>
+        <div style="font-size:14px; color:var(--text-muted);" id="r-period">Month Year</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:13px; font-weight:600; color:var(--primary);">Rate: <span id="r-rate">5%</span></div>
+      </div>
+    </div>
 
-  <!-- Full manager panel -->
-  <div class="mgr-panel" id="mgrPanel">
-    <table class="items-table" id="itemsTable">
-      <thead>
-        <tr>
-          <th style="width:28px"></th>
-          <th style="width:32px">#</th>
-          <th>Item name</th>
-          <th style="width:110px;text-align:right">Rate / unit</th>
-          <th style="width:44px;text-align:center">Del</th>
-        </tr>
-      </thead>
-      <tbody id="itemsTbody"></tbody>
+    <div class="summary-grid">
+      <div class="metric"><div class="lbl">Total Sales</div><div class="val" id="r-sum-sales">0.00</div></div>
+      <div class="metric"><div class="lbl">Sales Comm</div><div class="val" id="r-sum-scomm">0.00</div></div>
+      <div class="metric"><div class="lbl">Conduct Comm</div><div class="val" id="r-sum-tcomm">0.00</div></div>
+      <div class="metric total"><div class="lbl">Total Earnings</div><div class="val" id="r-sum-total">0.00</div></div>
+    </div>
+  </div>
+
+  <p class="no-print" style="font-size:12px; color:var(--text-light); text-align:center; margin-bottom:8px;">
+    ⇄ Swipe table horizontally to view all items
+  </p>
+  
+  <div class="table-wrap">
+    <table class="res-table">
+      <thead id="r-thead"></thead>
+      <tbody id="r-tbody"></tbody>
+      <tfoot id="r-tfoot"></tfoot>
     </table>
-    <div class="add-item-row">
-      <input type="text" id="new-item-name" placeholder="New item name (e.g. Underarm)" style="flex:1">
-      <input type="number" id="new-item-rate" placeholder="Rate" min="0" step="0.1" style="width:90px">
-      <button class="btn btn-primary" onclick="addItem()">+ Add item</button>
-    </div>
-    <p style="font-size:11px;color:var(--text3);margin-top:8px">
-      Drag ☰ to reorder · Changes apply to the calculator table immediately
-    </p>
   </div>
-</div>
 
-<!-- Month / Row Controls -->
-<div class="card no-print">
-  <div class="card-title">Rows</div>
-  <div class="row">
-    <div class="ctrl-group">
-      <label>Month</label>
-      <input type="month" id="monthPicker">
-    </div>
-    <button class="btn btn-secondary" onclick="generateMonth()">⟳ Generate month rows</button>
-    <div class="divider"></div>
-    <button class="btn btn-outline" onclick="addRow(null)">+ Add single row</button>
-    <button class="btn btn-outline" onclick="clearAll(false)" style="color:var(--danger);border-color:var(--border2)">Clear all</button>
-    <div class="divider"></div>
-    <button class="btn btn-primary" onclick="printPage()" style="margin-left:auto">🖨 Print / Save PDF</button>
+  <div class="no-print" style="display:flex; flex-direction:column; gap:12px; margin-top:24px;">
+    <button class="btn btn-primary" onclick="window.print()">🖨 Save as PDF / Print</button>
+    <button class="btn btn-secondary" onclick="location.reload()">↺ Start New Month</button>
   </div>
-</div>
-
-<!-- Commission table -->
-<div class="table-wrap">
-<table id="main-table">
-<thead>
-  <tr>
-    <th class="left" rowspan="2" style="min-width:100px;width:100px">Date</th>
-    <th rowspan="2" style="min-width:68px;width:72px">Daily<br>Sales</th>
-    <th colspan="7" class="group-treat" id="treat-group-header">Treatment Commission (qty × rate)</th>
-    <th colspan="2" class="group-result">Result</th>
-    <th rowspan="2" class="no-print" style="width:30px;background:var(--surface2)"></th>
-  </tr>
-  <tr id="thead-labels">
-    <th class="group-result" style="min-width:68px;width:74px">Sales Com</th>
-    <th class="group-result" style="min-width:72px;width:80px;font-weight:700">Total Com</th>
-  </tr>
-</thead>
-<tbody id="rows"></tbody>
-<tfoot>
-  <tr id="foot-row">
-    <td class="left">TOTAL</td>
-    <td id="f-sales">—</td>
-    <td id="f-scom">—</td>
-    <td id="f-total" class="total-final">—</td>
-    <td class="no-print"></td>
-  </tr>
-</tfoot>
-</table>
-</div>
-
-<!-- Summary -->
-<div class="summary">
-  <div class="metric"><div class="lbl">Total sales</div><div class="val" id="s-sales">—</div></div>
-  <div class="metric green"><div class="lbl">Treatment commission</div><div class="val" id="s-tcom">—</div></div>
-  <div class="metric gold"><div class="lbl">Sales com (<span id="s-pct">5</span>%)</div><div class="val" id="s-scom">—</div></div>
-  <div class="metric total"><div class="lbl">Total commission</div><div class="val" id="s-total">—</div></div>
-  <div class="metric"><div class="lbl">Active days</div><div class="val" id="s-days">—</div></div>
-  <div class="metric"><div class="lbl">Avg daily com</div><div class="val" id="s-avg">—</div></div>
 </div>
 
 <script>
-/* ─── State ─── */
+/* ================= STATE ================= */
 let TREATMENTS = [
-  { id:1, name:'Full Leg / Brazilian',       rate:5.4 },
-  { id:2, name:'Neck / Armpit / Chin',       rate:1.2 },
-  { id:3, name:'Forearm / Half Face / Belly',rate:1.7 },
-  { id:4, name:'Finger / Toe / Lip',         rate:0.8 },
-  { id:5, name:'Lower Leg / Thigh / Back',   rate:2.5 },
-  { id:6, name:'Full Face / Full Arm',       rate:2.1 },
-  { id:7, name:'Bikini',                     rate:4.0 },
-  { id:7, name:'Full Body & Face',             rate:26.4 },
-  { id:7, name:'Full body',                   rate:24.3 },
+  { id:1, name:'Full Leg / Brazilian', rate:5.4 },
+  { id:2, name:'Neck / Armpit / Chin', rate:1.2 },
+  { id:3, name:'Forearm / Belly', rate:1.7 },
+  { id:4, name:'Finger / Toe / Lip', rate:0.8 },
+  { id:5, name:'Lower Leg / Thigh / Back', rate:2.5 },
+  { id:6, name:'Full Face / Full Arm', rate:2.1 },
+  { id:7, name:'Bikini', rate:4.0 },
+  { id:8, name:'Full Body & Face', rate:26.4 }
 ];
-let nextTid = 8;
-let rows = [], rowId = 0;
-let dragSrc = null;
+let nextTid = 9;
 
-const DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let config = { name: '', monthStr: '', daysInMonth: 0, salesRate: 5.0 };
+// 数据结构升级：salesRecords 替代了单一的 sales 数字
+let dailyData = []; 
+let currentDayIdx = 0;
 
-/* ─── Helpers ─── */
-const getCur  = () => document.getElementById('currency').value;
-const getPct  = () => (parseFloat(document.getElementById('salesPct').value)||5)/100;
-const fmt     = n  => getCur()+' '+n.toFixed(2);
-const set     = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-/* ─── Item Manager ─── */
-function toggleMgr() {
-  const p = document.getElementById('mgrPanel');
-  const open = p.classList.toggle('open');
-  document.getElementById('mgr-toggle-label').textContent = open ? '▴ Hide' : '▾ Manage items';
-  document.getElementById('items-chips').style.display = open ? 'none' : '';
+/* ================= INIT & STEP 1 ================= */
+window.onload = () => {
+  const d = new Date();
+  d.setMonth(d.getMonth() - 1);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  document.getElementById('s1-month').value = `${yyyy}-${mm}`;
+  renderTreatmentsMgr();
+};
+
+function renderTreatmentsMgr() {
+  const list = document.getElementById('s1-treatments-list');
+  document.getElementById('t-count').textContent = `${TREATMENTS.length} items`;
+  list.innerHTML = TREATMENTS.map((t) => `
+    <div class="mobile-list-item">
+      <div class="info" style="display:flex; gap:8px;">
+        <input type="text" value="${t.name}" onchange="updateT(${t.id}, 'name', this.value)" placeholder="Name">
+        <input type="number" step="0.1" value="${t.rate}" onchange="updateT(${t.id}, 'rate', this.value)" style="width:80px; text-align:center;">
+      </div>
+      <button class="btn-icon" onclick="delT(${t.id})">✕</button>
+    </div>
+  `).join('');
 }
 
-function renderChips() {
-  const c = document.getElementById('items-chips');
-  c.innerHTML = TREATMENTS.map(t =>
-    `<span class="rate-badge">${t.name.split('/')[0].trim()} ×${t.rate}</span>`
-  ).join('');
+function updateT(id, field, val) {
+  const t = TREATMENTS.find(x => x.id === id);
+  if(field === 'name') t.name = val;
+  else t.rate = parseFloat(val) || 0;
 }
-
-function renderItemsTable() {
-  const tbody = document.getElementById('itemsTbody');
-  tbody.innerHTML = '';
-  TREATMENTS.forEach((t, i) => {
-    const tr = document.createElement('tr');
-    tr.dataset.tid = t.id;
-    tr.draggable = true;
-    tr.innerHTML = `
-      <td><span class="drag-handle" title="Drag to reorder">☰</span></td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text3);text-align:center">${i+1}</td>
-      <td><input type="text" value="${t.name}" oninput="updateItem(${t.id},'name',this.value)" placeholder="Item name"></td>
-      <td style="text-align:right">
-        <input type="number" value="${t.rate}" min="0" step="0.1" oninput="updateItem(${t.id},'rate',this.value)">
-      </td>
-      <td style="text-align:center">
-        <button class="btn-danger-sm" onclick="removeItem(${t.id})" title="Delete item">✕</button>
-      </td>`;
-
-    /* Drag events */
-    tr.addEventListener('dragstart', e => {
-      dragSrc = tr;
-      tr.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-    });
-    tr.addEventListener('dragend', () => {
-      tr.classList.remove('dragging');
-      document.querySelectorAll('#itemsTbody tr').forEach(r => r.classList.remove('drag-over'));
-    });
-    tr.addEventListener('dragover', e => {
-      e.preventDefault();
-      document.querySelectorAll('#itemsTbody tr').forEach(r => r.classList.remove('drag-over'));
-      if (tr !== dragSrc) tr.classList.add('drag-over');
-    });
-    tr.addEventListener('drop', e => {
-      e.preventDefault();
-      if (!dragSrc || dragSrc === tr) return;
-      const srcId = parseInt(dragSrc.dataset.tid);
-      const dstId = parseInt(tr.dataset.tid);
-      const si = TREATMENTS.findIndex(x=>x.id===srcId);
-      const di = TREATMENTS.findIndex(x=>x.id===dstId);
-      const [item] = TREATMENTS.splice(si,1);
-      TREATMENTS.splice(di,0,item);
-      afterItemChange();
-    });
-
-    tbody.appendChild(tr);
-  });
-}
-
-function updateItem(tid, field, val) {
-  const t = TREATMENTS.find(x=>x.id===tid);
-  if (!t) return;
-  if (field==='rate') t.rate = parseFloat(val)||0;
-  else t.name = val;
-  afterItemChange();
-}
-
-function removeItem(tid) {
-  if (TREATMENTS.length <= 1) return alert('At least one item is required.');
-  if (!confirm('Remove this item? Existing qty data for this column will be lost.')) return;
-  const idx = TREATMENTS.findIndex(x=>x.id===tid);
-  TREATMENTS.splice(idx,1);
-  // Strip that column from all rows
-  rows.forEach(r => r.tqty.splice(idx,1));
-  afterItemChange();
-}
-
-function addItem() {
-  const nameEl = document.getElementById('new-item-name');
-  const rateEl = document.getElementById('new-item-rate');
-  const name = nameEl.value.trim();
-  const rate = parseFloat(rateEl.value)||0;
-  if (!name) { nameEl.focus(); return; }
+function delT(id) { TREATMENTS = TREATMENTS.filter(x => x.id !== id); renderTreatmentsMgr(); }
+function addTreatment() {
+  const name = document.getElementById('new-t-name').value.trim();
+  const rate = parseFloat(document.getElementById('new-t-rate').value) || 0;
+  if(!name) return;
   TREATMENTS.push({ id: nextTid++, name, rate });
-  rows.forEach(r => r.tqty.push(0));
-  nameEl.value = '';
-  rateEl.value = '';
-  nameEl.focus();
-  afterItemChange();
+  document.getElementById('new-t-name').value = '';
+  document.getElementById('new-t-rate').value = '';
+  renderTreatmentsMgr();
 }
 
-function afterItemChange() {
-  renderItemsTable();
-  renderChips();
-  rebuildHeaders();
-  // recalc is called inside rebuildHeaders
+function switchView(stepId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(stepId).classList.add('active');
+  window.scrollTo(0,0);
 }
 
-/* ─── Month / Row controls ─── */
-(function(){
-  const now = new Date();
-  document.getElementById('monthPicker').value =
-    now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
-})();
+/* ================= TRANSITION TO STEP 2 ================= */
+function startWizard() {
+  config.name = document.getElementById('s1-name').value.trim() || 'Staff';
+  config.monthStr = document.getElementById('s1-month').value;
+  config.salesRate = parseFloat(document.getElementById('s1-comm').value) || 0;
 
-function generateMonth() {
-  const val = document.getElementById('monthPicker').value;
-  if (!val) return alert('Please select a month first.');
-  const [year,month] = val.split('-').map(Number);
-  const days = new Date(year,month,0).getDate();
-  if (rows.length>0 && !confirm(`Replace existing ${rows.length} row(s) with ${days} days for ${MONTHS[month-1]} ${year}?`)) return;
-  clearAll(true);
-  for (let d=1;d<=days;d++) {
-    const date = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    addRow(date);
-  }
-}
+  if(!config.monthStr) return alert("Please select a valid month.");
 
-function clearAll(silent) {
-  if (!silent && rows.length>0 && !confirm('Clear all rows?')) return;
-  rows=[];
-  document.getElementById('rows').innerHTML='';
-  recalc();
-}
-
-function addRow(dateVal) {
-  const id = rowId++;
-  const now = new Date();
-  const defDate = dateVal||`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-  const row = { id, date:defDate, sales:0, tqty:new Array(TREATMENTS.length).fill(0) };
-  rows.push(row);
-  renderRow(row);
-  recalc();
-}
-
-function getDayLabel(ds) {
-  if (!ds) return '';
-  return DAYS[new Date(ds+'T00:00:00').getDay()];
-}
-function isWeekend(ds) {
-  const d = new Date(ds+'T00:00:00').getDay();
-  return d===0||d===6;
-}
-
-function renderRow(r) {
-  const tbody = document.getElementById('rows');
-  const tr = document.createElement('tr');
-  tr.id='row-'+r.id;
-  if (isWeekend(r.date)) tr.classList.add('weekend');
-
-  const treatCells = TREATMENTS.map((_,i)=>
-    `<td class="val-cell" id="tqtd-${r.id}-${i}" data-val=""><input type="number" value="" min="0" step="1" placeholder="—" oninput="updateTqty(${r.id},${i},this.value)"></td>`
-  ).join('');
-
-  tr.innerHTML = `
-    <td class="day-cell">
-      <span style="font-size:9.5px;color:var(--text3);display:inline-block;min-width:24px">${getDayLabel(r.date)}</span>
-      <span style="font-weight:500">${r.date.slice(8)}</span>
-      <span style="font-size:10px;color:var(--text3)"> ${r.date.slice(0,7)}</span>
-    </td>
-    <td class="val-cell" id="std-${r.id}" data-val="">
-      <input type="number" value="" min="0" step="0.01" placeholder="0.00" oninput="updateRow(${r.id},'sales',this.value)" style="width:60px">
-    </td>
-    ${treatCells}
-    <td class="cal-scom" id="sc-${r.id}">—</td>
-    <td class="cal-total" id="tc-${r.id}">—</td>
-    <td class="no-print"><button class="btn-danger-sm" onclick="deleteRow(${r.id})" title="Delete">✕</button></td>`;
-  tbody.appendChild(tr);
-}
-
-/* ─── Header / footer rebuild ─── */
-function rebuildHeaders() {
-  /* thead labels row */
-  const labelRow = document.getElementById('thead-labels');
-  const allTh = labelRow.querySelectorAll('th');
-  for (let i=allTh.length-3;i>=0;i--) allTh[i].remove();
-  const salesTh = labelRow.querySelectorAll('th')[0];
-  TREATMENTS.forEach(t => {
-    const th = document.createElement('th');
-    th.className='group-treat';
-    th.style.cssText='min-width:50px;white-space:normal;line-height:1.3;font-size:9px;padding:5px 3px';
-    th.innerHTML=`${t.name.split('/')[0].trim()}<br><span style="font-weight:400;opacity:.7">×${t.rate}</span>`;
-    labelRow.insertBefore(th,salesTh);
-  });
-  document.getElementById('treat-group-header').colSpan = TREATMENTS.length;
-
-  /* tfoot */
-  const foot = document.getElementById('foot-row');
-  const footTds = foot.querySelectorAll('td');
-  for (let i=footTds.length-4;i>=1;i--) footTds[i].remove();
-  const fScom = foot.querySelector('#f-scom');
-  TREATMENTS.forEach((_,i) => {
-    const td=document.createElement('td');
-    td.id='f-tr'+i;
-    td.style.cssText="font-family:'DM Mono',monospace;font-size:11px";
-    td.textContent='—';
-    foot.insertBefore(td,fScom);
-  });
-
-  /* data rows */
-  rows.forEach(r => {
-    const tr = document.getElementById('row-'+r.id);
-    if (!tr) return;
-    const scTd = tr.querySelector('#sc-'+r.id);
-    let td = tr.querySelector('#std-'+r.id).nextElementSibling;
-    while (td&&td!==scTd){const n=td.nextElementSibling;td.remove();td=n;}
-    TREATMENTS.forEach((_,i)=>{
-      const ntd=document.createElement('td');
-      ntd.className='val-cell';
-      ntd.id=`tqtd-${r.id}-${i}`;
-      ntd.dataset.val=r.tqty[i]||'';
-      ntd.innerHTML=`<input type="number" value="${r.tqty[i]||''}" min="0" step="1" placeholder="—" oninput="updateTqty(${r.id},${i},this.value)">`;
-      tr.insertBefore(ntd,scTd);
+  const [y, m] = config.monthStr.split('-').map(Number);
+  config.daysInMonth = new Date(y, m, 0).getDate();
+  
+  dailyData = [];
+  for(let d = 1; d <= config.daysInMonth; d++) {
+    dailyData.push({
+      date: `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`,
+      salesRecords: [], // 初始化每日销售明细数组
+      tqty: new Array(TREATMENTS.length).fill(0)
     });
-  });
-  recalc();
-}
-
-/* ─── Data updates ─── */
-function updateRow(id,field,val) {
-  const r=rows.find(r=>r.id===id);
-  if(!r) return;
-  r[field]=parseFloat(val)||0;
-  const el=document.getElementById('std-'+id);
-  if(el) el.dataset.val=r.sales?r.sales.toFixed(2):'';
-  recalc();
-}
-
-function updateTqty(id,idx,val) {
-  const r=rows.find(r=>r.id===id);
-  if(!r) return;
-  while(r.tqty.length<=idx) r.tqty.push(0);
-  r.tqty[idx]=parseFloat(val)||0;
-  const td=document.getElementById(`tqtd-${id}-${idx}`);
-  if(td) td.dataset.val=r.tqty[idx]||'';
-  recalc();
-}
-
-function deleteRow(id) {
-  rows=rows.filter(r=>r.id!==id);
-  const tr=document.getElementById('row-'+id);
-  if(tr) tr.remove();
-  recalc();
-}
-
-/* ─── Calculations ─── */
-function treatmentCom(r){ return r.tqty.reduce((s,q,i)=>s+(q||0)*(TREATMENTS[i]?.rate||0),0); }
-function salesCom(r)    { return (r.sales||0)*getPct(); }
-
-function recalc() {
-  let totSales=0,totTC=0,totSC=0,totTotal=0,activeDays=0;
-  const totT=new Array(TREATMENTS.length).fill(0);
-
-  rows.forEach(r=>{
-    const tc=treatmentCom(r),sc=salesCom(r),tot=tc+sc;
-    totSales+=r.sales||0;totTC+=tc;totSC+=sc;totTotal+=tot;
-    r.tqty.forEach((q,i)=>{if(i<totT.length)totT[i]+=q||0;});
-    if(tot>0) activeDays++;
-    const scEl=document.getElementById('sc-'+r.id);
-    const tcEl=document.getElementById('tc-'+r.id);
-    if(scEl) scEl.textContent=sc>0?fmt(sc):'—';
-    if(tcEl) tcEl.textContent=tot>0?fmt(tot):'—';
-  });
-
-  set('f-sales',getCur()+' '+totSales.toFixed(2));
-  totT.forEach((v,i)=>set('f-tr'+i,v||'—'));
-  set('f-scom',fmt(totSC));
-  set('f-total',fmt(totTotal));
-  set('s-sales',getCur()+' '+totSales.toFixed(2));
-  set('s-tcom',fmt(totTC));
-  set('s-scom',fmt(totSC));
-  set('s-total',fmt(totTotal));
-  set('s-days',activeDays);
-  set('s-avg',activeDays?fmt(totTotal/activeDays):'—');
-  set('s-pct',(getPct()*100).toFixed(1).replace('.0',''));
-}
-
-/* ─── Print ─── */
-function printPage() {
-  const name=document.getElementById('staffName').value.trim();
-  const monthVal=document.getElementById('monthPicker').value;
-  document.getElementById('ph-name').textContent=name||'Staff';
-  if(monthVal){
-    const [y,m]=monthVal.split('-');
-    document.getElementById('ph-period').textContent=MONTHS[parseInt(m)-1]+' '+y;
   }
-  document.getElementById('ph-pct').textContent=(getPct()*100).toFixed(1).replace('.0','');
-  document.getElementById('ph-date').textContent=new Date().toLocaleDateString();
-  window.print();
+
+  currentDayIdx = 0;
+  switchView('step2');
+  renderDailyWizard();
 }
 
-document.getElementById('salesPct').addEventListener('input',recalc);
-document.getElementById('currency').addEventListener('change',recalc);
+/* ================= STEP 2: DAILY LOGIC ================= */
+function renderDailyWizard() {
+  const data = dailyData[currentDayIdx];
+  const dateObj = new Date(data.date + "T00:00:00");
+  
+  document.getElementById('s2-date-title').textContent = `Day ${currentDayIdx + 1}`;
+  document.getElementById('s2-date-sub').textContent = `${DAYS[dateObj.getDay()]}, ${data.date}`;
+  document.getElementById('s2-counter').textContent = `${currentDayIdx + 1} / ${config.daysInMonth}`;
+  document.getElementById('s2-progress').style.width = `${((currentDayIdx + 1) / config.daysInMonth) * 100}%`;
 
-/* ─── Init ─── */
-renderItemsTable();
-renderChips();
-rebuildHeaders();
+  // 渲染销售明细
+  renderDailySalesUI();
+
+  // 渲染治疗项目
+  const container = document.getElementById('s2-treatments-container');
+  container.innerHTML = TREATMENTS.map((t, i) => `
+    <div class="treat-card">
+      <div class="treat-card-header">
+        <div class="treat-name">${t.name}</div>
+        <div class="treat-rate">x${t.rate}</div>
+      </div>
+      <div class="qty-ctrl">
+        <button onclick="changeQty(${i}, -1)">-</button>
+        <input type="number" id="qty-in-${i}" value="${data.tqty[i]}" step="any" onfocus="this.select()">
+        <button onclick="changeQty(${i}, 1)">+</button>
+      </div>
+    </div>
+  `).join('');
+
+  // 底部按钮
+  const prevBtn = document.getElementById('btn-prev-day');
+  prevBtn.style.display = currentDayIdx === 0 ? 'none' : 'flex';
+  const nextBtn = document.getElementById('btn-next-day');
+  if (currentDayIdx === config.daysInMonth - 1) {
+    nextBtn.textContent = "Generate Report ✓";
+    nextBtn.style.background = "var(--success)";
+  } else {
+    nextBtn.textContent = "Next Day →";
+    nextBtn.style.background = "var(--primary)";
+  }
+}
+
+// ---- 销售记录相关逻辑 ----
+function renderDailySalesUI() {
+  const list = document.getElementById('s2-sales-list');
+  const records = dailyData[currentDayIdx].salesRecords;
+  
+  if (records.length === 0) {
+    list.innerHTML = `<div style="font-size:12px; color:var(--text-light); text-align:center; padding: 4px;">No sales recorded today.</div>`;
+  } else {
+    list.innerHTML = records.map((r, i) => `
+      <div class="sales-record-item">
+        <div style="flex:1; font-weight:500;">${r.desc}</div>
+        <div style="font-family:'DM Mono'; font-weight:600; margin-right:12px;">${r.amount.toFixed(2)}</div>
+        <button class="btn-small-del" onclick="removeDailySale(${i})">Del</button>
+      </div>
+    `).join('');
+  }
+
+  const dayTotal = records.reduce((sum, r) => sum + r.amount, 0);
+  document.getElementById('s2-sales-total').textContent = dayTotal.toFixed(2);
+}
+
+function addDailySale() {
+  const descEl = document.getElementById('s2-sale-desc');
+  const amtEl = document.getElementById('s2-sale-amt');
+  const desc = descEl.value.trim() || 'Sale';
+  const amt = parseFloat(amtEl.value) || 0;
+  
+  if (!descEl.value.trim() && amt === 0) return; // 空数据不添加
+  
+  dailyData[currentDayIdx].salesRecords.push({ desc, amount: amt });
+  descEl.value = '';
+  amtEl.value = '';
+  renderDailySalesUI();
+}
+
+function removeDailySale(idx) {
+  dailyData[currentDayIdx].salesRecords.splice(idx, 1);
+  renderDailySalesUI();
+}
+
+// ---- 治疗项目逻辑 ----
+function changeQty(idx, delta) {
+  const input = document.getElementById(`qty-in-${idx}`);
+  let val = parseFloat(input.value) || 0;
+  val += delta;
+  if (val < 0) val = 0;
+  input.value = Number.isInteger(val) ? val : val.toFixed(1);
+}
+
+function saveCurrentDay() {
+  // 如果输入框里有写东西但没点Add，自动帮用户Add进去，防止丢失
+  const pendingDesc = document.getElementById('s2-sale-desc').value.trim();
+  const pendingAmt = parseFloat(document.getElementById('s2-sale-amt').value);
+  if (pendingDesc || !isNaN(pendingAmt)) {
+    addDailySale(); 
+  }
+
+  // 保存治疗数量
+  const data = dailyData[currentDayIdx];
+  TREATMENTS.forEach((_, i) => {
+    data.tqty[i] = parseFloat(document.getElementById(`qty-in-${i}`).value) || 0;
+  });
+}
+
+function navigateDay(dir) {
+  saveCurrentDay();
+  if (dir === 1 && currentDayIdx === config.daysInMonth - 1) {
+    generateReport();
+  } else {
+    currentDayIdx += dir;
+    renderDailyWizard();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+/* ================= STEP 3: RESULT REPORT ================= */
+function generateReport() {
+  switchView('step3');
+
+  const [y, m] = config.monthStr.split('-');
+  document.getElementById('r-name').textContent = config.name;
+  document.getElementById('r-period').textContent = `${MONTHS[parseInt(m)-1]} ${y}`;
+  document.getElementById('r-rate').textContent = `${config.salesRate}%`;
+
+  // 表头设计
+  const thead = document.getElementById('r-thead');
+  let thHtml = `<tr>
+    <th class="left">Date</th>
+    <th style="text-align:left;">Sales Details</th>
+    <th>Total Sales</th>
+    <th>S.Comm</th>`;
+  TREATMENTS.forEach(t => { thHtml += `<th>${t.name.split('/')[0]}</th>`; });
+  thHtml += `<th style="color:var(--primary);">Total Earnings</th></tr>`;
+  thead.innerHTML = thHtml;
+
+  // 表格内容
+  const tbody = document.getElementById('r-tbody');
+  let tbHtml = '';
+  let sumSales = 0, sumSComm = 0, sumTComm = 0, sumTotal = 0;
+  let sumQty = new Array(TREATMENTS.length).fill(0);
+
+  dailyData.forEach(d => {
+    const daySalesTotal = d.salesRecords.reduce((sum, r) => sum + r.amount, 0);
+    const scomm = daySalesTotal * (config.salesRate / 100);
+    let tcomm = 0;
+    let tds = '';
+    
+    d.tqty.forEach((q, i) => {
+      tcomm += q * TREATMENTS[i].rate;
+      sumQty[i] += q;
+      tds += `<td style="${q > 0 ? 'font-weight:600;color:var(--primary);' : 'color:var(--border-focus);'}">${q > 0 ? q : '-'}</td>`;
+    });
+
+    const dayTotal = scomm + tcomm;
+    sumSales += daySalesTotal; sumSComm += scomm; sumTComm += tcomm; sumTotal += dayTotal;
+
+    // 格式化当天的所有销售备注
+    const descTextHtml = d.salesRecords.map(r => `<div><span style="color:var(--text-main);font-weight:500;">${r.desc}</span>: <span style="font-family:'DM Mono';">${r.amount.toFixed(2)}</span></div>`).join('');
+
+    const isWeekend = (new Date(d.date+"T00:00:00").getDay() % 6 === 0);
+    tbHtml += `
+      <tr class="${isWeekend ? 'weekend' : ''}">
+        <td class="left">${d.date.slice(5)}</td>
+        <td class="desc-cell">${descTextHtml || '-'}</td>
+        <td>${daySalesTotal > 0 ? daySalesTotal.toFixed(2) : '-'}</td>
+        <td style="color:var(--success);">${scomm > 0 ? scomm.toFixed(2) : '-'}</td>
+        ${tds}
+        <td style="color:var(--primary);font-weight:700;">${dayTotal > 0 ? dayTotal.toFixed(2) : '-'}</td>
+      </tr>
+    `;
+  });
+  tbody.innerHTML = tbHtml;
+
+  // 表格底部统计
+  const tfoot = document.getElementById('r-tfoot');
+  let tfHtml = `<tr>
+    <td class="left" colspan="2">MONTHLY TOTAL</td>
+    <td>${sumSales.toFixed(2)}</td>
+    <td style="color:var(--success)">${sumSComm.toFixed(2)}</td>`;
+  sumQty.forEach(q => { tfHtml += `<td>${q > 0 ? q : '-'}</td>`; });
+  tfHtml += `<td style="color:var(--primary); font-size:15px;">${sumTotal.toFixed(2)}</td></tr>`;
+  tfoot.innerHTML = tfHtml;
+
+  // 顶部总计面板
+  document.getElementById('r-sum-sales').textContent = sumSales.toFixed(2);
+  document.getElementById('r-sum-scomm').textContent = sumSComm.toFixed(2);
+  document.getElementById('r-sum-tcomm').textContent = sumTComm.toFixed(2);
+  document.getElementById('r-sum-total').textContent = sumTotal.toFixed(2);
+}
 </script>
 </body>
 </html>
