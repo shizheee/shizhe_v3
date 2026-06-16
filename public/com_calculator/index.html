@@ -24,11 +24,13 @@
   --radius: 12px; 
   --radius-lg: 20px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+/* touch-action: manipulation 是彻底禁止双击放大的终极方案 */
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); min-height: 100vh; padding: 12px 12px 100px 12px; }
 
 /* View & Animation */
-.view { display: none; width: 100%; max-width: 600px; margin: 0 auto; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+.view { display: none; width: 100%; max-width: 600px; margin: 0 auto; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-align: center }
 .view.active { display: block; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -88,12 +90,19 @@ input:focus { outline: none; border-color: var(--primary); background: var(--sur
 
 .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 24px; }
 table.res-table { width: 100%; border-collapse: collapse; min-width: 800px; font-size: 13px; }
-table.res-table th { background: var(--surface-alt); padding: 12px 8px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+table.res-table th { background: var(--surface-alt); padding: 12px 8px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border); }
 table.res-table td { padding: 12px 8px; border-bottom: 1px solid var(--border); text-align: center; font-family: 'DM Mono', monospace; vertical-align: top; }
 table.res-table td.left { text-align: left; font-family: 'Inter', sans-serif; font-weight: 500; padding-left: 16px; }
 table.res-table td.desc-cell { text-align: left; font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text-muted); line-height: 1.4; white-space: nowrap; }
 table.res-table tr.weekend { background: #fdfbf7; }
 table.res-table tfoot td { font-weight: 700; border-top: 2px solid var(--border); background: var(--surface-alt); }
+
+table.res-table { min-width: 1100px; } /* Increase overall table width to allow scrolling */
+.col-date { width: 40px; min-width: 40px; }
+.col-desc { width: 280px; min-width: 280px; white-space: normal; }
+.col-sales, .col-scomm { width: 65px; min-width: 65px; }
+.col-treat { width: 85px; min-width: 85px; max-width: 85px; word-wrap: break-word; }
+.col-total { width: 85px; min-width: 85px; }
 
 /* ================= 打印极度优化 ================= */
 @media print {
@@ -115,6 +124,16 @@ table.res-table tfoot td { font-weight: 700; border-top: 2px solid var(--border)
   table.res-table td { padding: 6px 4px; }
   table.res-table td.left { padding-left: 6px; }
   table.res-table td.desc-cell { font-size: 9px; white-space: normal; min-width: 120px; }
+
+  table.res-table { width: 100%; table-layout: fixed; min-width: unset; }
+  table.res-table th { white-space: normal !important; word-wrap: break-word; }
+  
+  /* PDF Column Proportions (adjust percentages if needed) */
+  .col-date { width: 1%; }
+  .col-desc { width: 28%; word-wrap: break-word; } /* Wide Sales Details for PDF */
+  .col-sales, .col-scomm { width: 5%; }
+  .col-treat { width: 7.2%; word-wrap: break-word; } /* Fixed tight width for Treatments */
+  .col-total { width: 7%; }
 }
 </style>
 </head>
@@ -217,7 +236,7 @@ table.res-table tfoot td { font-weight: 700; border-top: 2px solid var(--border)
         <div style="font-size:14px; color:var(--text-muted);" id="r-period">Month Year</div>
       </div>
       <div style="text-align:right;">
-        <div style="font-size:13px; font-weight:600; color:var(--primary);">Rate: <span id="r-rate">5%</span></div>
+        <div style="font-size:13px; font-weight:600; color:var(--primary);">Commission Rate: <span id="r-rate">5%</span></div>
       </div>
     </div>
 
@@ -250,19 +269,19 @@ table.res-table tfoot td { font-weight: 700; border-top: 2px solid var(--border)
 <script>
 /* ================= STATE ================= */
 let TREATMENTS = [
-  { id:1, name:'Full Leg / Brazilian', rate:5.4 },
-  { id:2, name:'Neck / Armpit / Chin', rate:1.2 },
-  { id:3, name:'Forearm / Belly', rate:1.7 },
-  { id:4, name:'Finger / Toe / Lip', rate:0.8 },
-  { id:5, name:'Lower Leg / Thigh / Back', rate:2.5 },
-  { id:6, name:'Full Face / Full Arm', rate:2.1 },
-  { id:7, name:'Bikini', rate:4.0 },
-  { id:8, name:'Full Body & Face', rate:26.4 }
+  { id: 1, name: "Full Leg/Brazilian<br/>全腿 / 巴西", rate:5.4 },
+  { id: 2, name: "Neck/Armpit/Chin<br/>颈部 / 腋下 / 下巴", rate:1.2 },
+  { id: 3, name: "Forearm/Half Face/Chest/Belly<br/>半手 / 半脸 / 胸部 / 肚子", rate:1.7 },
+  { id: 4, name: "Finger/Toe/Button/Upper Lip/Lower Lip<br/>手指 / 脚趾 / 肚脐 / 上唇 / 下唇", rate:0.8 },
+  { id: 5, name: "Lower Leg/Thigh/Back<br/>小腿 / 大腿 / 背部", rate:2.5 },
+  { id: 6, name: "Full Face/Full Arm<br/>全脸 / 全手", rate:2.1 },
+  { id: 7, name: "Bikini<br/>比基尼", rate:4 },
+  { id: 8, name: "Full Body + Full Face<br/>全身 + 全脸", rate:26.4 },
+  { id: 9, name: "Full Body<br/>全身", rate:24.3 }
 ];
-let nextTid = 9;
+let nextTid = 10;
 
 let config = { name: '', monthStr: '', daysInMonth: 0, salesRate: 5.0 };
-// 数据结构升级：salesRecords 替代了单一的 sales 数字
 let dailyData = []; 
 let currentDayIdx = 0;
 
@@ -285,7 +304,7 @@ function renderTreatmentsMgr() {
   list.innerHTML = TREATMENTS.map((t) => `
     <div class="mobile-list-item">
       <div class="info" style="display:flex; gap:8px;">
-        <input type="text" value="${t.name}" onchange="updateT(${t.id}, 'name', this.value)" placeholder="Name">
+        <input type="text" value="${t.name.replace(/<br\/>/g, ' ')}" onchange="updateT(${t.id}, 'name', this.value)" placeholder="Name">
         <input type="number" step="0.1" value="${t.rate}" onchange="updateT(${t.id}, 'rate', this.value)" style="width:80px; text-align:center;">
       </div>
       <button class="btn-icon" onclick="delT(${t.id})">✕</button>
@@ -330,7 +349,7 @@ function startWizard() {
   for(let d = 1; d <= config.daysInMonth; d++) {
     dailyData.push({
       date: `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`,
-      salesRecords: [], // 初始化每日销售明细数组
+      salesRecords: [], 
       tqty: new Array(TREATMENTS.length).fill(0)
     });
   }
@@ -350,10 +369,8 @@ function renderDailyWizard() {
   document.getElementById('s2-counter').textContent = `${currentDayIdx + 1} / ${config.daysInMonth}`;
   document.getElementById('s2-progress').style.width = `${((currentDayIdx + 1) / config.daysInMonth) * 100}%`;
 
-  // 渲染销售明细
   renderDailySalesUI();
 
-  // 渲染治疗项目
   const container = document.getElementById('s2-treatments-container');
   container.innerHTML = TREATMENTS.map((t, i) => `
     <div class="treat-card">
@@ -369,7 +386,6 @@ function renderDailyWizard() {
     </div>
   `).join('');
 
-  // 底部按钮
   const prevBtn = document.getElementById('btn-prev-day');
   prevBtn.style.display = currentDayIdx === 0 ? 'none' : 'flex';
   const nextBtn = document.getElementById('btn-next-day');
@@ -409,7 +425,7 @@ function addDailySale() {
   const desc = descEl.value.trim() || 'Sale';
   const amt = parseFloat(amtEl.value) || 0;
   
-  if (!descEl.value.trim() && amt === 0) return; // 空数据不添加
+  if (!descEl.value.trim() && amt === 0) return;
   
   dailyData[currentDayIdx].salesRecords.push({ desc, amount: amt });
   descEl.value = '';
@@ -432,14 +448,12 @@ function changeQty(idx, delta) {
 }
 
 function saveCurrentDay() {
-  // 如果输入框里有写东西但没点Add，自动帮用户Add进去，防止丢失
   const pendingDesc = document.getElementById('s2-sale-desc').value.trim();
   const pendingAmt = parseFloat(document.getElementById('s2-sale-amt').value);
   if (pendingDesc || !isNaN(pendingAmt)) {
     addDailySale(); 
   }
 
-  // 保存治疗数量
   const data = dailyData[currentDayIdx];
   TREATMENTS.forEach((_, i) => {
     data.tqty[i] = parseFloat(document.getElementById(`qty-in-${i}`).value) || 0;
@@ -469,11 +483,13 @@ function generateReport() {
   // 表头设计
   const thead = document.getElementById('r-thead');
   let thHtml = `<tr>
-    <th class="left">Date</th>
+    <th class="left">Dated</th>
     <th style="text-align:left;">Sales Details</th>
     <th>Total Sales</th>
     <th>S.Comm</th>`;
-  TREATMENTS.forEach(t => { thHtml += `<th>${t.name.split('/')[0]}</th>`; });
+  
+  // 修改 1: 完整显示所有的 Treatment 名称（不再使用 split）
+  TREATMENTS.forEach(t => { thHtml += `<th>${t.name}</th>`; });
   thHtml += `<th style="color:var(--primary);">Total Earnings</th></tr>`;
   thead.innerHTML = thHtml;
 
@@ -498,13 +514,16 @@ function generateReport() {
     const dayTotal = scomm + tcomm;
     sumSales += daySalesTotal; sumSComm += scomm; sumTComm += tcomm; sumTotal += dayTotal;
 
-    // 格式化当天的所有销售备注
     const descTextHtml = d.salesRecords.map(r => `<div><span style="color:var(--text-main);font-weight:500;">${r.desc}</span>: <span style="font-family:'DM Mono';">${r.amount.toFixed(2)}</span></div>`).join('');
 
     const isWeekend = (new Date(d.date+"T00:00:00").getDay() % 6 === 0);
+    
+    // 修改 2: 提取并只显示单独的 "日" 数字
+    const dayNumber = parseInt(d.date.split('-')[2], 10);
+    
     tbHtml += `
       <tr class="${isWeekend ? 'weekend' : ''}">
-        <td class="left">${d.date.slice(5)}</td>
+        <td class="left">${dayNumber}</td>
         <td class="desc-cell">${descTextHtml || '-'}</td>
         <td>${daySalesTotal > 0 ? daySalesTotal.toFixed(2) : '-'}</td>
         <td style="color:var(--success);">${scomm > 0 ? scomm.toFixed(2) : '-'}</td>
@@ -525,7 +544,6 @@ function generateReport() {
   tfHtml += `<td style="color:var(--primary); font-size:15px;">${sumTotal.toFixed(2)}</td></tr>`;
   tfoot.innerHTML = tfHtml;
 
-  // 顶部总计面板
   document.getElementById('r-sum-sales').textContent = sumSales.toFixed(2);
   document.getElementById('r-sum-scomm').textContent = sumSComm.toFixed(2);
   document.getElementById('r-sum-tcomm').textContent = sumTComm.toFixed(2);
