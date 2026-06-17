@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Mobile Commission Calculator - Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root {
   --bg: #f2f4f7; 
@@ -117,12 +118,12 @@ table.res-table tr.weekend { background: #fdfbf7; }
 table.res-table tfoot td { font-weight: 700; border-top: 2px solid var(--border); background: var(--surface-alt); }
 
 /* Table Columns Configuration */
-table.res-table { min-width: 1180px; } /* Increased to fit Daily Comm */
+table.res-table { min-width: 1180px; } 
 .col-date { width: 40px; min-width: 40px; }
 .col-desc { width: 260px; min-width: 260px; white-space: normal; } 
 .col-sales, .col-scomm { width: 65px; min-width: 65px; }
 .col-treat { width: 85px; min-width: 85px; max-width: 85px; word-wrap: break-word; }
-.col-daily-comm { width: 75px; min-width: 75px; } /* NEW COLUMN */
+.col-daily-comm { width: 75px; min-width: 75px; } 
 .col-total { width: 85px; min-width: 85px; }
 
 /* Print Mode */
@@ -141,12 +142,11 @@ table.res-table { min-width: 1180px; } /* Increased to fit Daily Comm */
   table.res-table td.left { padding-left: 4px; }
   table.res-table td.desc-cell { font-size: 9px; white-space: normal; min-width: 100px; }
   
-  /* Adjusted Proportions to fit Daily Comm */
   .col-date { width: 3%; }
   .col-desc { width: 23%; word-wrap: break-word; } 
   .col-sales, .col-scomm { width: 5%; }
   .col-treat { width: 7.2%; word-wrap: break-word; } 
-  .col-daily-comm { width: 5.5%; word-wrap: break-word; } /* NEW COLUMN IN PRINT */
+  .col-daily-comm { width: 5.5%; word-wrap: break-word; } 
   .col-total { width: 6.5%; }
 }
 </style>
@@ -305,6 +305,7 @@ table.res-table { min-width: 1180px; } /* Increased to fit Daily Comm */
   </div>
 
   <div class="no-print" style="display:flex; flex-direction:column; gap:12px; margin-top:24px;">
+    <button class="btn btn-primary" style="background: #10b981; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);" onclick="exportExcel()">📊 Export Excel</button>
     <button class="btn btn-primary" onclick="window.print()">🖨 Save as PDF / Print</button>
     <button class="btn btn-secondary" onclick="location.reload()">↺ Start New Month</button>
   </div>
@@ -607,7 +608,6 @@ function generateReport() {
     <th class="col-scomm">S.Comm</th>`;
   
   TREATMENTS.forEach(t => { thHtml += `<th class="col-treat">${t.name}</th>`; });
-  // ADDED DAILY COMM COLUMN HERE
   thHtml += `<th class="col-daily-comm">Daily Comm</th>`;
   thHtml += `<th class="col-total" style="color:var(--primary);">Total Earnings</th></tr>`;
   thead.innerHTML = thHtml;
@@ -668,7 +668,6 @@ function generateReport() {
     const isWeekend = (new Date(d.date+"T00:00:00").getDay() % 6 === 0);
     const dayNumber = parseInt(d.date.split('-')[2], 10);
     
-    // OUTPUT DAY ROW WITH DAILY COMM
     tbHtml += `
       <tr class="${isWeekend ? 'weekend' : ''}">
         <td class="left col-date">${dayNumber}</td>
@@ -689,7 +688,6 @@ function generateReport() {
     <td class="col-sales">${sumSales.toFixed(2)}</td>
     <td class="col-scomm" style="color:var(--success)">${sumSComm.toFixed(2)}</td>`;
   sumQty.forEach(q => { tfHtml += `<td class="col-treat">${q > 0 ? q : '-'}</td>`; });
-  // TFOOT TOTAL DAILY COMM
   tfHtml += `<td class="col-daily-comm" style="color:var(--warning); font-weight:700;">${sumTComm.toFixed(2)}</td>`;
   tfHtml += `<td class="col-total" style="color:var(--primary); font-size:15px;">${sumTotal.toFixed(2)}</td></tr>`;
   tfoot.innerHTML = tfHtml;
@@ -698,6 +696,92 @@ function generateReport() {
   document.getElementById('r-sum-scomm').textContent = sumSComm.toFixed(2);
   document.getElementById('r-sum-tcomm').textContent = sumTComm.toFixed(2);
   document.getElementById('r-sum-total').textContent = sumTotal.toFixed(2);
+}
+
+/* ================= EXPORT EXCEL ================= */
+function exportExcel() {
+  const headers = ['Dated', 'Sales Details', 'Total Sales', 'S.Comm'];
+  TREATMENTS.forEach(t => headers.push(t.name.replace(/<br\/>/g, ' ')));
+  headers.push('Daily Comm', 'Total Earnings');
+  
+  const aoa = [headers];
+  
+  let sumSales = 0, sumSComm = 0, sumTComm = 0, sumTotal = 0;
+  let sumQty = new Array(TREATMENTS.length).fill(0);
+  const salesRateMultiplier = config.salesRate / 100;
+
+  dailyData.forEach(d => {
+    let daySalesTotal = 0;
+    let scomm = 0;
+    
+    // Format Sales Details for Excel (using | separator for plain text)
+    const detailsText = d.salesRecords.map(r => {
+      let effectiveSales = 0;
+      let typeLabel = '';
+      let amtText = r.amount.toFixed(2);
+      
+      if (r.type === 'conduct') {
+        typeLabel = '(Conduct)';
+        amtText = '-';
+      } else if (r.type === 'split') {
+        effectiveSales = r.amount / r.splitCount;
+        typeLabel = `(Split/${r.splitCount})`;
+      } else if (r.type === 'classpass') {
+        effectiveSales = r.amount * 0.8;
+        typeLabel = '(Classpass)';
+      } else {
+        effectiveSales = r.amount;
+      }
+      
+      daySalesTotal += effectiveSales;
+      if (r.type !== 'conduct') {
+        scomm += effectiveSales * salesRateMultiplier;
+      }
+      
+      return r.type === 'conduct' 
+        ? `${r.desc} ${typeLabel}`
+        : `${r.desc} ${typeLabel}: ${amtText}`;
+    }).join(' | ');
+    
+    let tcomm = 0;
+    const tQtyRow = [];
+    d.tqty.forEach((q, i) => {
+      tcomm += q * TREATMENTS[i].rate;
+      sumQty[i] += q;
+      tQtyRow.push(q > 0 ? q : '');
+    });
+    
+    const dayTotal = scomm + tcomm;
+    sumSales += daySalesTotal; sumSComm += scomm; sumTComm += tcomm; sumTotal += dayTotal;
+    
+    const dayNumber = parseInt(d.date.split('-')[2], 10);
+    
+    const rowData = [
+      dayNumber,
+      detailsText || '-',
+      daySalesTotal > 0 ? parseFloat(daySalesTotal.toFixed(2)) : '',
+      scomm > 0 ? parseFloat(scomm.toFixed(2)) : '',
+      ...tQtyRow,
+      tcomm > 0 ? parseFloat(tcomm.toFixed(2)) : '',
+      dayTotal > 0 ? parseFloat(dayTotal.toFixed(2)) : ''
+    ];
+    
+    aoa.push(rowData);
+  });
+  
+  // Prepare Footer
+  const footer = ['MONTHLY TOTAL', '', parseFloat(sumSales.toFixed(2)), parseFloat(sumSComm.toFixed(2))];
+  sumQty.forEach(q => footer.push(q > 0 ? q : ''));
+  footer.push(parseFloat(sumTComm.toFixed(2)), parseFloat(sumTotal.toFixed(2)));
+  aoa.push(footer);
+  
+  // Generate Excel
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Commission Report");
+  
+  const fileName = `${config.name.replace(/\s+/g, '_')}_Commission_${config.monthStr}.xlsx`;
+  XLSX.writeFile(wb, fileName);
 }
 </script>
 </body>
