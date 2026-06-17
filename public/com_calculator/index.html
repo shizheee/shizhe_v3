@@ -21,11 +21,12 @@
   --success: #10b981;
   --danger: #ef4444;
   --danger-light: #fee2e2;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
   --radius: 12px; 
   --radius-lg: 20px;
 }
 
-/* touch-action: manipulation 是彻底禁止双击放大的终极方案 */
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); min-height: 100vh; padding: 12px 12px 100px 12px; }
 
@@ -58,16 +59,34 @@ input:focus { outline: none; border-color: var(--primary); background: var(--sur
 .btn-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--danger-light); color: var(--danger); display: flex; align-items: center; justify-content: center; border: none; font-size: 18px; }
 .btn-small-del { background: transparent; color: var(--danger); border: none; padding: 4px 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
 
+/* Help Icon & Modals (Tutorial) */
+.help-icon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--border-focus); color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; margin-left: 8px; vertical-align: middle; transition: 0.2s; font-family: 'Inter', sans-serif; }
+.help-icon:active { background: var(--text-muted); transform: scale(0.9); }
+
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; justify-content: center; align-items: flex-end; padding: 12px; opacity: 0; transition: opacity 0.3s; backdrop-filter: blur(2px); }
+.modal-overlay.active { display: flex; opacity: 1; }
+.modal-content { background: var(--surface); border-radius: var(--radius-lg); width: 100%; max-width: 500px; padding: 24px; position: relative; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 -10px 25px rgba(0,0,0,0.1); }
+.modal-overlay.active .modal-content { transform: translateY(0); }
+.modal-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); }
+.modal-body { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; }
+.modal-body b { color: var(--text-main); }
+.modal-close { position: absolute; top: 16px; right: 16px; background: var(--surface-alt); border-radius: 50%; width: 32px; height: 32px; border: none; font-size: 16px; color: var(--text-muted); cursor: pointer; display: flex; justify-content: center; align-items: center; }
+.modal-close:active { background: var(--border); }
+
 /* Setup List */
 .mobile-list-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
 .mobile-list-item:last-child { border-bottom: none; }
 
-/* Wizard Styles */
+/* Wizard Styles & Sales Types */
 .header-sticky { position: sticky; top: 0; background: var(--bg); padding: 12px 0 16px 0; z-index: 10; margin-bottom: 8px; }
 .progress-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; margin-top: 12px; overflow: hidden; }
 .progress-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
 
 .sales-record-item { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px; }
+.type-selector { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
+.type-btn { flex: 1; white-space: nowrap; font-size: 11px; font-weight: 600; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface-alt); color: var(--text-muted); transition: all 0.2s; cursor: pointer; }
+.type-btn.active { background: var(--primary-light); color: var(--primary-dark); border-color: var(--primary); }
+
 .treat-card { display: flex; flex-direction: column; gap: 12px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
 .treat-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
 .treat-name { font-size: 15px; font-weight: 600; color: var(--text-main); }
@@ -97,54 +116,61 @@ table.res-table td.desc-cell { text-align: left; font-family: 'Inter', sans-seri
 table.res-table tr.weekend { background: #fdfbf7; }
 table.res-table tfoot td { font-weight: 700; border-top: 2px solid var(--border); background: var(--surface-alt); }
 
-table.res-table { min-width: 1100px; } /* Increase overall table width to allow scrolling */
+/* Table Columns Configuration */
+table.res-table { min-width: 1180px; } /* Increased to fit Daily Comm */
 .col-date { width: 40px; min-width: 40px; }
-.col-desc { width: 280px; min-width: 280px; white-space: normal; }
+.col-desc { width: 260px; min-width: 260px; white-space: normal; } 
 .col-sales, .col-scomm { width: 65px; min-width: 65px; }
 .col-treat { width: 85px; min-width: 85px; max-width: 85px; word-wrap: break-word; }
+.col-daily-comm { width: 75px; min-width: 75px; } /* NEW COLUMN */
 .col-total { width: 85px; min-width: 85px; }
 
-/* ================= 打印极度优化 ================= */
+/* Print Mode */
 @media print {
   @page { size: A4 landscape; margin: 8mm; }
   body { background: #fff; padding: 0; }
-  
-  /* 解除宽度限制，让表格铺满 A4 纸 */
   .view { max-width: none !important; width: 100% !important; margin: 0; }
   .table-wrap { overflow: visible !important; border: 1px solid #aaa; margin-bottom: 0; }
-  
-  /* 隐藏多余元素 */
   .no-print, .bottom-nav { display: none !important; }
   .card { border: 1px solid #ddd; box-shadow: none; margin-bottom: 10px; padding: 12px; }
   .metric { border: 1px solid #ddd; padding: 10px; }
   
-  /* 调整表格字体以容纳更多列 */
-  table.res-table { font-size: 10px; min-width: 100%; }
-  table.res-table th { font-size: 9px; padding: 6px 4px; }
-  table.res-table td { padding: 6px 4px; }
-  table.res-table td.left { padding-left: 6px; }
-  table.res-table td.desc-cell { font-size: 9px; white-space: normal; min-width: 120px; }
-
-  table.res-table { width: 100%; table-layout: fixed; min-width: unset; }
-  table.res-table th { white-space: normal !important; word-wrap: break-word; }
+  table.res-table { font-size: 10px; min-width: 100%; width: 100%; table-layout: fixed; }
+  table.res-table th { font-size: 9px; padding: 6px 2px; white-space: normal !important; word-wrap: break-word; }
+  table.res-table td { padding: 6px 2px; }
+  table.res-table td.left { padding-left: 4px; }
+  table.res-table td.desc-cell { font-size: 9px; white-space: normal; min-width: 100px; }
   
-  /* PDF Column Proportions (adjust percentages if needed) */
-  .col-date { width: 1%; }
-  .col-desc { width: 28%; word-wrap: break-word; } /* Wide Sales Details for PDF */
+  /* Adjusted Proportions to fit Daily Comm */
+  .col-date { width: 3%; }
+  .col-desc { width: 23%; word-wrap: break-word; } 
   .col-sales, .col-scomm { width: 5%; }
-  .col-treat { width: 7.2%; word-wrap: break-word; } /* Fixed tight width for Treatments */
-  .col-total { width: 7%; }
+  .col-treat { width: 7.2%; word-wrap: break-word; } 
+  .col-daily-comm { width: 5.5%; word-wrap: break-word; } /* NEW COLUMN IN PRINT */
+  .col-total { width: 6.5%; }
 }
 </style>
 </head>
 <body>
+
+<div class="modal-overlay" id="helpModal" onclick="closeHelp(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeHelp()">✕</button>
+    <div class="modal-title" id="helpTitle">Help</div>
+    <div class="modal-body" id="helpBody">Content</div>
+    <button class="btn btn-primary" onclick="closeHelp()">Got it</button>
+  </div>
+</div>
 
 <div id="step1" class="view active">
   <div class="page-title">Setup</div>
   <div class="page-desc">Configure staff and rates.</div>
 
   <div class="card">
-    <div class="card-title">1. Basic Info</div>
+    <div class="card-title">
+      <span>1. Basic Info</span>
+      <span class="help-icon" onclick="openHelp('setup')">?</span>
+    </div>
     <div class="form-group">
       <label>Staff Name</label>
       <input type="text" id="s1-name" placeholder="e.g. Joy">
@@ -163,7 +189,7 @@ table.res-table { min-width: 1100px; } /* Increase overall table width to allow 
 
   <div class="card">
     <div class="card-title">
-      <span>2. Treatments</span>
+      <span>2. Treatments <span class="help-icon" onclick="openHelp('setup_treat')">?</span></span>
       <span class="card-subtitle" id="t-count">8 items</span>
     </div>
     <div id="s1-treatments-list"></div>
@@ -197,10 +223,24 @@ table.res-table { min-width: 1100px; } /* Increase overall table width to allow 
   </div>
 
   <div class="card" style="border-color: var(--primary-light); background: #f0f9ff; padding: 16px;">
-    <div class="card-title" style="margin-bottom:12px; color:var(--primary-dark);">💰 Daily Sales Records</div>
+    <div class="card-title" style="margin-bottom:12px; color:var(--primary-dark);">
+      <span>💰 Daily Sales Records</span>
+      <span class="help-icon" style="background:var(--primary);" onclick="openHelp('sales_type')">?</span>
+    </div>
     
-    <div id="s2-sales-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom: 12px;">
-      </div>
+    <div id="s2-sales-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom: 12px;"></div>
+
+    <div class="type-selector">
+      <button class="type-btn active" id="btn-type-conduct" onclick="setSaleType('conduct')">Conduct</button>
+      <button class="type-btn" id="btn-type-repeat" onclick="setSaleType('repeat')">Repeat order</button>
+      <button class="type-btn" id="btn-type-split" onclick="setSaleType('split')">Split comm</button>
+      <button class="type-btn" id="btn-type-classpass" onclick="setSaleType('classpass')">Classpass</button>
+    </div>
+
+    <div id="split-wrapper" style="display:none; align-items:center; gap:8px; margin-bottom:12px; background:var(--surface-alt); padding:8px 12px; border-radius:8px; border:1px solid var(--border);">
+      <span style="font-size:13px; font-weight:500;">Split by (persons):</span>
+      <input type="number" id="s2-split-count" value="2" min="2" style="width:60px; padding:6px; font-size:14px; text-align:center;">
+    </div>
 
     <div style="display:flex; gap: 8px; align-items:center;">
       <input type="text" id="s2-sale-desc" placeholder="Description" style="flex:1; font-size:14px; padding:10px;">
@@ -209,10 +249,14 @@ table.res-table { min-width: 1100px; } /* Increase overall table width to allow 
     </div>
     
     <div style="margin-top:16px; font-size:16px; font-weight:700; color:var(--primary-dark); text-align:right; border-top: 1px dashed #bae6fd; padding-top: 12px;">
-      Today's Sales Total: <span id="s2-sales-total">0.00</span>
+      Today's Effective Sales: <span id="s2-sales-total">0.00</span>
     </div>
   </div>
 
+  <div style="margin-bottom: 12px; display:flex; align-items:center;">
+    <span style="font-size: 15px; font-weight: 700; color: var(--text-main);">💆‍♀️ Treatments Conducted</span>
+    <span class="help-icon" onclick="openHelp('treatments')">?</span>
+  </div>
   <div id="s2-treatments-container"></div>
 
   <div style="height: 40px;"></div> 
@@ -267,6 +311,35 @@ table.res-table { min-width: 1100px; } /* Increase overall table width to allow 
 </div>
 
 <script>
+/* ================= HELP TUTORIAL DATA ================= */
+const HELP_CONTENT = {
+  setup: {
+    title: "Basic Info Setup",
+    body: "<b>Period:</b> Select the Month and Year you are recording data for.<br><br><b>Sales Comm (%):</b> Your standard sales commission rate (e.g. enter 5 for 5%). This is used to calculate earnings from new sales."
+  },
+  setup_treat: {
+    title: "Treatments Setup",
+    body: "Define all the treatment services you provide. <br><br><b>Rate:</b> This is the fixed Conduct Commission (RM) you earn every time you perform this specific treatment (regardless of who sold it)."
+  },
+  sales_type: {
+    title: "Sales Types Explained",
+    body: "<b>1. Conduct (Default):</b> You only performed the service, no new sales generated. Displays the description without any sales amount.<br><br><b>2. Repeat order:</b> Standard full sale. You earn the full commission (e.g. 5% of RM200 = RM10).<br><br><b>3. Split comm:</b> Shared sale. The sales value is divided by the number of persons <i>before</i> calculating your commission (e.g. RM200 split by 2 = RM100 effective sales).<br><br><b>4. Classpass:</b> Platform sale. The recorded value is automatically reduced by 20% <i>before</i> your commission is calculated."
+  },
+  treatments: {
+    title: "Recording Treatments",
+    body: "Use the <b>+</b> and <b>-</b> buttons to record how many times you performed each treatment today.<br><br>💡 <b>Tip:</b> You can also tap the number directly to type a decimal (e.g., type <b>0.5</b> if you only did half the treatment)."
+  }
+};
+
+function openHelp(topic) {
+  document.getElementById('helpTitle').innerHTML = HELP_CONTENT[topic].title;
+  document.getElementById('helpBody').innerHTML = HELP_CONTENT[topic].body;
+  document.getElementById('helpModal').classList.add('active');
+}
+function closeHelp(e) {
+  document.getElementById('helpModal').classList.remove('active');
+}
+
 /* ================= STATE ================= */
 let TREATMENTS = [
   { id: 1, name: "Full Leg/Brazilian<br/>全腿 / 巴西", rate:5.4 },
@@ -284,6 +357,7 @@ let nextTid = 10;
 let config = { name: '', monthStr: '', daysInMonth: 0, salesRate: 5.0 };
 let dailyData = []; 
 let currentDayIdx = 0;
+let currentSaleType = 'conduct'; 
 
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -296,6 +370,12 @@ window.onload = () => {
   const mm = String(d.getMonth() + 1).padStart(2, '0');
   document.getElementById('s1-month').value = `${yyyy}-${mm}`;
   renderTreatmentsMgr();
+
+  document.getElementById('s2-sale-amt').addEventListener('input', function() {
+    if (parseFloat(this.value) > 0 && currentSaleType === 'conduct') {
+      setSaleType('repeat');
+    }
+  });
 };
 
 function renderTreatmentsMgr() {
@@ -369,6 +449,10 @@ function renderDailyWizard() {
   document.getElementById('s2-counter').textContent = `${currentDayIdx + 1} / ${config.daysInMonth}`;
   document.getElementById('s2-progress').style.width = `${((currentDayIdx + 1) / config.daysInMonth) * 100}%`;
 
+  setSaleType('conduct');
+  document.getElementById('s2-sale-desc').value = '';
+  document.getElementById('s2-sale-amt').value = '';
+  
   renderDailySalesUI();
 
   const container = document.getElementById('s2-treatments-container');
@@ -387,7 +471,7 @@ function renderDailyWizard() {
   `).join('');
 
   const prevBtn = document.getElementById('btn-prev-day');
-  prevBtn.style.display = currentDayIdx === 0 ? 'none' : 'flex';
+  prevBtn.style.visibility = currentDayIdx === 0 ? 'hidden' : 'visible';
   const nextBtn = document.getElementById('btn-next-day');
   if (currentDayIdx === config.daysInMonth - 1) {
     nextBtn.textContent = "Generate Report ✓";
@@ -398,38 +482,74 @@ function renderDailyWizard() {
   }
 }
 
-// ---- 销售记录相关逻辑 ----
+function setSaleType(type) {
+  currentSaleType = type;
+  document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('btn-type-' + type).classList.add('active');
+  document.getElementById('split-wrapper').style.display = (type === 'split') ? 'flex' : 'none';
+}
+
 function renderDailySalesUI() {
   const list = document.getElementById('s2-sales-list');
   const records = dailyData[currentDayIdx].salesRecords;
   
   if (records.length === 0) {
-    list.innerHTML = `<div style="font-size:12px; color:var(--text-light); text-align:center; padding: 4px;">No sales recorded today.</div>`;
+    list.innerHTML = `<div style="font-size:12px; color:var(--text-light); text-align:center; padding: 4px;">No records yet.</div>`;
   } else {
-    list.innerHTML = records.map((r, i) => `
+    list.innerHTML = records.map((r, i) => {
+      let badge = '';
+      let amtStr = `<div style="font-family:'DM Mono'; font-weight:600; margin-right:12px;">${r.amount.toFixed(2)}</div>`;
+      
+      if(r.type === 'conduct') {
+        badge = '<span style="font-size:10px; background:#e5e7eb; padding:2px 6px; border-radius:4px; margin-left:6px;">Conduct</span>';
+        amtStr = '<div style="margin-right:12px; color:var(--text-light); font-size:12px;">-</div>';
+      } else if (r.type === 'split') {
+        badge = `<span style="font-size:10px; background:var(--primary-light); color:var(--primary-dark); padding:2px 6px; border-radius:4px; margin-left:6px;">Split/${r.splitCount}</span>`;
+      } else if (r.type === 'classpass') {
+        badge = '<span style="font-size:10px; background:var(--danger-light); color:var(--danger); padding:2px 6px; border-radius:4px; margin-left:6px;">Classpass</span>';
+      } else {
+        badge = '<span style="font-size:10px; background:var(--success-light); color:#065f46; padding:2px 6px; border-radius:4px; margin-left:6px;">Repeat</span>';
+      }
+
+      return `
       <div class="sales-record-item">
-        <div style="flex:1; font-weight:500;">${r.desc}</div>
-        <div style="font-family:'DM Mono'; font-weight:600; margin-right:12px;">${r.amount.toFixed(2)}</div>
+        <div style="flex:1; font-weight:500;">${r.desc}${badge}</div>
+        ${amtStr}
         <button class="btn-small-del" onclick="removeDailySale(${i})">Del</button>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   }
 
-  const dayTotal = records.reduce((sum, r) => sum + r.amount, 0);
+  const dayTotal = records.reduce((sum, r) => {
+    if (r.type === 'conduct') return sum;
+    if (r.type === 'split') return sum + (r.amount / r.splitCount);
+    if (r.type === 'classpass') return sum + (r.amount * 0.8);
+    return sum + r.amount; 
+  }, 0);
   document.getElementById('s2-sales-total').textContent = dayTotal.toFixed(2);
 }
 
 function addDailySale() {
   const descEl = document.getElementById('s2-sale-desc');
   const amtEl = document.getElementById('s2-sale-amt');
-  const desc = descEl.value.trim() || 'Sale';
+  const splitEl = document.getElementById('s2-split-count');
+  
+  const desc = descEl.value.trim() || (currentSaleType === 'conduct' ? 'Conduct' : 'Record');
   const amt = parseFloat(amtEl.value) || 0;
+  const splitCount = parseInt(splitEl.value) || 2;
   
   if (!descEl.value.trim() && amt === 0) return;
   
-  dailyData[currentDayIdx].salesRecords.push({ desc, amount: amt });
+  dailyData[currentDayIdx].salesRecords.push({
+    desc,
+    amount: currentSaleType === 'conduct' ? 0 : amt, 
+    type: currentSaleType,
+    splitCount: currentSaleType === 'split' ? splitCount : null
+  });
+  
   descEl.value = '';
   amtEl.value = '';
+  setSaleType('conduct');
   renderDailySalesUI();
 }
 
@@ -438,7 +558,6 @@ function removeDailySale(idx) {
   renderDailySalesUI();
 }
 
-// ---- 治疗项目逻辑 ----
 function changeQty(idx, delta) {
   const input = document.getElementById(`qty-in-${idx}`);
   let val = parseFloat(input.value) || 0;
@@ -480,68 +599,99 @@ function generateReport() {
   document.getElementById('r-period').textContent = `${MONTHS[parseInt(m)-1]} ${y}`;
   document.getElementById('r-rate').textContent = `${config.salesRate}%`;
 
-  // 表头设计
   const thead = document.getElementById('r-thead');
   let thHtml = `<tr>
-    <th class="left">Dated</th>
-    <th style="text-align:left;">Sales Details</th>
-    <th>Total Sales</th>
-    <th>S.Comm</th>`;
+    <th class="left col-date">Dated</th>
+    <th class="col-desc" style="text-align:left;">Sales Details</th>
+    <th class="col-sales">Total Sales</th>
+    <th class="col-scomm">S.Comm</th>`;
   
-  // 修改 1: 完整显示所有的 Treatment 名称（不再使用 split）
-  TREATMENTS.forEach(t => { thHtml += `<th>${t.name}</th>`; });
-  thHtml += `<th style="color:var(--primary);">Total Earnings</th></tr>`;
+  TREATMENTS.forEach(t => { thHtml += `<th class="col-treat">${t.name}</th>`; });
+  // ADDED DAILY COMM COLUMN HERE
+  thHtml += `<th class="col-daily-comm">Daily Comm</th>`;
+  thHtml += `<th class="col-total" style="color:var(--primary);">Total Earnings</th></tr>`;
   thead.innerHTML = thHtml;
 
-  // 表格内容
   const tbody = document.getElementById('r-tbody');
   let tbHtml = '';
   let sumSales = 0, sumSComm = 0, sumTComm = 0, sumTotal = 0;
   let sumQty = new Array(TREATMENTS.length).fill(0);
+  const salesRateMultiplier = config.salesRate / 100;
 
   dailyData.forEach(d => {
-    const daySalesTotal = d.salesRecords.reduce((sum, r) => sum + r.amount, 0);
-    const scomm = daySalesTotal * (config.salesRate / 100);
+    let daySalesTotal = 0;
+    let scomm = 0;
+
+    const descTextHtml = d.salesRecords.map(r => {
+      let recordComm = 0;
+      let effectiveSales = 0;
+      let displayAmt = `<span style="font-family:'DM Mono';">${r.amount.toFixed(2)}</span>`;
+      let typeLabel = '';
+
+      if (r.type === 'conduct') {
+        effectiveSales = 0;
+        displayAmt = ''; 
+      } else if (r.type === 'split') {
+        effectiveSales = r.amount / r.splitCount;
+        recordComm = effectiveSales * salesRateMultiplier;
+        typeLabel = ` <span style="font-size:10px; color:var(--primary-dark); background:var(--primary-light); padding:1px 4px; border-radius:4px;">Split/${r.splitCount}</span>`;
+      } else if (r.type === 'classpass') {
+        effectiveSales = r.amount * 0.8;
+        recordComm = effectiveSales * salesRateMultiplier;
+        typeLabel = ` <span style="font-size:10px; color:var(--danger); background:var(--danger-light); padding:1px 4px; border-radius:4px;">Classpass</span>`;
+      } else { 
+        effectiveSales = r.amount;
+        recordComm = effectiveSales * salesRateMultiplier;
+      }
+      
+      daySalesTotal += effectiveSales;
+      scomm += recordComm;
+      
+      let descStr = `<span style="color:var(--text-main);font-weight:500;">${r.desc}</span>${typeLabel}`;
+      
+      return r.type === 'conduct' 
+        ? `<div>${descStr}</div>` 
+        : `<div>${descStr}: ${displayAmt}</div>`;
+    }).join('');
+
     let tcomm = 0;
     let tds = '';
-    
     d.tqty.forEach((q, i) => {
       tcomm += q * TREATMENTS[i].rate;
       sumQty[i] += q;
-      tds += `<td style="${q > 0 ? 'font-weight:600;color:var(--primary);' : 'color:var(--border-focus);'}">${q > 0 ? q : '-'}</td>`;
+      tds += `<td class="col-treat" style="${q > 0 ? 'font-weight:600;color:var(--primary);' : 'color:var(--border-focus);'}">${q > 0 ? q : '-'}</td>`;
     });
 
     const dayTotal = scomm + tcomm;
     sumSales += daySalesTotal; sumSComm += scomm; sumTComm += tcomm; sumTotal += dayTotal;
 
-    const descTextHtml = d.salesRecords.map(r => `<div><span style="color:var(--text-main);font-weight:500;">${r.desc}</span>: <span style="font-family:'DM Mono';">${r.amount.toFixed(2)}</span></div>`).join('');
-
     const isWeekend = (new Date(d.date+"T00:00:00").getDay() % 6 === 0);
-    
-    // 修改 2: 提取并只显示单独的 "日" 数字
     const dayNumber = parseInt(d.date.split('-')[2], 10);
     
+    // OUTPUT DAY ROW WITH DAILY COMM
     tbHtml += `
       <tr class="${isWeekend ? 'weekend' : ''}">
-        <td class="left">${dayNumber}</td>
-        <td class="desc-cell">${descTextHtml || '-'}</td>
-        <td>${daySalesTotal > 0 ? daySalesTotal.toFixed(2) : '-'}</td>
-        <td style="color:var(--success);">${scomm > 0 ? scomm.toFixed(2) : '-'}</td>
+        <td class="left col-date">${dayNumber}</td>
+        <td class="desc-cell col-desc">${descTextHtml || '-'}</td>
+        <td class="col-sales">${daySalesTotal > 0 ? daySalesTotal.toFixed(2) : '-'}</td>
+        <td class="col-scomm" style="color:var(--success);">${scomm > 0 ? scomm.toFixed(2) : '-'}</td>
         ${tds}
-        <td style="color:var(--primary);font-weight:700;">${dayTotal > 0 ? dayTotal.toFixed(2) : '-'}</td>
+        <td class="col-daily-comm" style="color:var(--warning);font-weight:600;">${tcomm > 0 ? tcomm.toFixed(2) : '-'}</td>
+        <td class="col-total" style="color:var(--primary);font-weight:700;">${dayTotal > 0 ? dayTotal.toFixed(2) : '-'}</td>
       </tr>
     `;
   });
   tbody.innerHTML = tbHtml;
 
-  // 表格底部统计
   const tfoot = document.getElementById('r-tfoot');
   let tfHtml = `<tr>
     <td class="left" colspan="2">MONTHLY TOTAL</td>
-    <td>${sumSales.toFixed(2)}</td>
-    <td style="color:var(--success)">${sumSComm.toFixed(2)}</td>`;
-  sumQty.forEach(q => { tfHtml += `<td>${q > 0 ? q : '-'}</td>`; });
-  tfHtml += `<td style="color:var(--primary); font-size:15px;">${sumTotal.toFixed(2)}</td></tr>`;
+    <td class="col-sales">${sumSales.toFixed(2)}</td>
+    <td class="col-scomm" style="color:var(--success)">${sumSComm.toFixed(2)}</td>`;
+  sumQty.forEach(q => { tfHtml += `<td class="col-treat">${q > 0 ? q : '-'}</td>`; });
+  // TFOOT TOTAL DAILY COMM
+  tfHtml += `<td class="col-daily-comm" style="color:var(--warning); font-weight:700;">${sumTComm.toFixed(2)}</td>`;
+  tfHtml += `<td class="col-total" style="color:var(--primary); font-size:15px;">${sumTotal.toFixed(2)}</td></tr>`;
   tfoot.innerHTML = tfHtml;
 
   document.getElementById('r-sum-sales').textContent = sumSales.toFixed(2);
