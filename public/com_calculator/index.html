@@ -29,10 +29,14 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); min-height: 100vh; padding: 12px 12px 100px 12px; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); min-height: 100vh; padding: 12px 12px 100px 12px; position: relative; }
+
+/* Secret JSON Entry */
+.secret-btn { position: absolute; top: 16px; right: 16px; background: transparent; border: none; font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 700; color: var(--border-focus); cursor: pointer; z-index: 50; transition: color 0.2s; }
+.secret-btn:active { color: var(--primary); }
 
 /* View & Animation */
-.view { display: none; width: 100%; max-width: 600px; margin: 0 auto; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+.view { display: none; width: 100%; max-width: 600px; margin: 0 auto; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; }
 .view.active { display: block; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -46,9 +50,10 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 /* Forms */
 .form-group { margin-bottom: 16px; }
 .form-group label { display: block; font-size: 13px; color: var(--text-muted); font-weight: 500; margin-bottom: 8px; }
-input[type=text], input[type=number], input[type=month] { width: 100%; font-family: 'Inter', sans-serif; font-size: 16px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-alt); color: var(--text-main); transition: all 0.2s; appearance: none; }
-input[type=number] { font-family: 'DM Mono', monospace; font-weight: 500; }
-input:focus { outline: none; border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 3px var(--primary-light); }
+input[type=text], input[type=number], input[type=month], textarea { width: 100%; font-family: 'Inter', sans-serif; font-size: 16px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-alt); color: var(--text-main); transition: all 0.2s; appearance: none; }
+input[type=number], textarea { font-family: 'DM Mono', monospace; font-weight: 500; }
+textarea { resize: vertical; min-height: 120px; font-size: 12px; }
+input:focus, textarea:focus { outline: none; border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 3px var(--primary-light); }
 
 /* Buttons */
 .btn { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600; padding: 16px; border-radius: var(--radius); cursor: pointer; border: none; transition: all 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
@@ -60,7 +65,7 @@ input:focus { outline: none; border-color: var(--primary); background: var(--sur
 .btn-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--danger-light); color: var(--danger); display: flex; align-items: center; justify-content: center; border: none; font-size: 18px; }
 .btn-small-del { background: transparent; color: var(--danger); border: none; padding: 4px 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
 
-/* Help Icon & Modals (Tutorial) */
+/* Help Icon & Modals */
 .help-icon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--border-focus); color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; margin-left: 8px; vertical-align: middle; transition: 0.2s; font-family: 'Inter', sans-serif; }
 .help-icon:active { background: var(--text-muted); transform: scale(0.9); }
 
@@ -122,7 +127,7 @@ table.res-table { min-width: 1180px; }
 .col-date { width: 40px; min-width: 40px; }
 .col-desc { width: 260px; min-width: 260px; white-space: normal; } 
 .col-sales, .col-scomm { width: 65px; min-width: 65px; }
-.col-treat { width: 85px; min-width: 85px; max-width: 85px; word-wrap: break-word; }
+.col-treat { width: 95px; min-width: 95px; max-width: 95px; word-wrap: break-word; } /* Increased slightly for price text */
 .col-daily-comm { width: 75px; min-width: 75px; } 
 .col-total { width: 85px; min-width: 85px; }
 
@@ -132,7 +137,7 @@ table.res-table { min-width: 1180px; }
   body { background: #fff; padding: 0; }
   .view { max-width: none !important; width: 100% !important; margin: 0; }
   .table-wrap { overflow: visible !important; border: 1px solid #aaa; margin-bottom: 0; }
-  .no-print, .bottom-nav { display: none !important; }
+  .no-print, .bottom-nav, .secret-btn { display: none !important; }
   .card { border: 1px solid #ddd; box-shadow: none; margin-bottom: 10px; padding: 12px; }
   .metric { border: 1px solid #ddd; padding: 10px; }
   
@@ -143,9 +148,9 @@ table.res-table { min-width: 1180px; }
   table.res-table td.desc-cell { font-size: 9px; white-space: normal; min-width: 100px; }
   
   .col-date { width: 3%; }
-  .col-desc { width: 23%; word-wrap: break-word; } 
+  .col-desc { width: 20%; word-wrap: break-word; } 
   .col-sales, .col-scomm { width: 5%; }
-  .col-treat { width: 7.2%; word-wrap: break-word; } 
+  .col-treat { width: 7.6%; word-wrap: break-word; } 
   .col-daily-comm { width: 5.5%; word-wrap: break-word; } 
   .col-total { width: 6.5%; }
 }
@@ -153,12 +158,26 @@ table.res-table { min-width: 1180px; }
 </head>
 <body>
 
-<div class="modal-overlay" id="helpModal" onclick="closeHelp(event)">
+<button class="secret-btn" onclick="openJsonModal()">{ }</button>
+
+<div class="modal-overlay" id="helpModal" onclick="closeModal('helpModal')">
   <div class="modal-content" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeHelp()">✕</button>
+    <button class="modal-close" onclick="closeModal('helpModal')">✕</button>
     <div class="modal-title" id="helpTitle">Help</div>
     <div class="modal-body" id="helpBody">Content</div>
-    <button class="btn btn-primary" onclick="closeHelp()">Got it</button>
+    <button class="btn btn-primary" onclick="closeModal('helpModal')">Got it</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="jsonModal" onclick="closeModal('jsonModal')">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('jsonModal')">✕</button>
+    <div class="modal-title">Import JSON Data</div>
+    <div class="modal-body">
+      Paste your previously exported or custom structured JSON data here to instantly generate the report.
+      <textarea id="jsonInput" placeholder='{"config": {...}, "treatments": [...], "dailyData": [...]}'></textarea>
+    </div>
+    <button class="btn btn-primary" style="background:#10b981;" onclick="importJson()">Process JSON</button>
   </div>
 </div>
 
@@ -312,7 +331,7 @@ table.res-table { min-width: 1180px; }
 </div>
 
 <script>
-/* ================= HELP TUTORIAL DATA ================= */
+/* ================= HELP TUTORIAL DATA & MODAL ================= */
 const HELP_CONTENT = {
   setup: {
     title: "Basic Info Setup",
@@ -337,9 +356,8 @@ function openHelp(topic) {
   document.getElementById('helpBody').innerHTML = HELP_CONTENT[topic].body;
   document.getElementById('helpModal').classList.add('active');
 }
-function closeHelp(e) {
-  document.getElementById('helpModal').classList.remove('active');
-}
+function openJsonModal() { document.getElementById('jsonModal').classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
 /* ================= STATE ================= */
 let TREATMENTS = [
@@ -413,6 +431,30 @@ function switchView(stepId) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(stepId).classList.add('active');
   window.scrollTo(0,0);
+}
+
+/* ================= IMPORT JSON ================= */
+function importJson() {
+  try {
+    const raw = document.getElementById('jsonInput').value;
+    const parsed = JSON.parse(raw);
+    
+    if(!parsed.config || !parsed.treatments || !parsed.dailyData) {
+      throw new Error("Invalid JSON structure.");
+    }
+    
+    config = parsed.config;
+    TREATMENTS = parsed.treatments;
+    dailyData = parsed.dailyData;
+    
+    // Auto-update max ID
+    nextTid = Math.max(...TREATMENTS.map(t => t.id)) + 1;
+    
+    closeModal('jsonModal');
+    generateReport();
+  } catch(e) {
+    alert("Error parsing JSON. Please ensure format is strictly valid.\n\nDetails: " + e.message);
+  }
 }
 
 /* ================= TRANSITION TO STEP 2 ================= */
@@ -607,7 +649,10 @@ function generateReport() {
     <th class="col-sales">Total Sales</th>
     <th class="col-scomm">S.Comm</th>`;
   
-  TREATMENTS.forEach(t => { thHtml += `<th class="col-treat">${t.name}</th>`; });
+  TREATMENTS.forEach(t => { 
+    // ADDED: Treatment Name + Unit Price
+    thHtml += `<th class="col-treat">${t.name}<br/><span style="font-weight:400;opacity:0.8;color:var(--primary);">(RM ${t.rate.toFixed(1)})</span></th>`; 
+  });
   thHtml += `<th class="col-daily-comm">Daily Comm</th>`;
   thHtml += `<th class="col-total" style="color:var(--primary);">Total Earnings</th></tr>`;
   thead.innerHTML = thHtml;
@@ -701,7 +746,8 @@ function generateReport() {
 /* ================= EXPORT EXCEL ================= */
 function exportExcel() {
   const headers = ['Dated', 'Sales Details', 'Total Sales', 'S.Comm'];
-  TREATMENTS.forEach(t => headers.push(t.name.replace(/<br\/>/g, ' ')));
+  // ADDED: Treatment Name + Unit Price to Excel Export
+  TREATMENTS.forEach(t => headers.push(`${t.name.replace(/<br\/>/g, ' ')} (RM${t.rate})`));
   headers.push('Daily Comm', 'Total Earnings');
   
   const aoa = [headers];
@@ -714,7 +760,6 @@ function exportExcel() {
     let daySalesTotal = 0;
     let scomm = 0;
     
-    // Format Sales Details for Excel (using | separator for plain text)
     const detailsText = d.salesRecords.map(r => {
       let effectiveSales = 0;
       let typeLabel = '';
@@ -769,13 +814,11 @@ function exportExcel() {
     aoa.push(rowData);
   });
   
-  // Prepare Footer
   const footer = ['MONTHLY TOTAL', '', parseFloat(sumSales.toFixed(2)), parseFloat(sumSComm.toFixed(2))];
   sumQty.forEach(q => footer.push(q > 0 ? q : ''));
   footer.push(parseFloat(sumTComm.toFixed(2)), parseFloat(sumTotal.toFixed(2)));
   aoa.push(footer);
   
-  // Generate Excel
   const ws = XLSX.utils.aoa_to_sheet(aoa);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Commission Report");
